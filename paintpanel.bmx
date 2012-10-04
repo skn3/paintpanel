@@ -22,6 +22,16 @@ Import maxgui.drivers
 Import "paintpanel.m"
 ?
 
+Private
+Function GetCreationGroup:TGadget(Gadget:TGadget)
+	' --- converts the gadget into the correct group for creating gadget ---
+	'this is also duplicated in maxguiex and stock maxgui (should have been public function)
+	Local tmpProxy:TProxyGadget = TProxyGadget(Gadget)
+	If tmpProxy Then Return GetCreationGroup(tmpProxy.proxy)
+	Return gadget
+EndFunction
+Public
+
 'skn3 framework code
 rem
 Import skn3.callback
@@ -30,12 +40,6 @@ Import skn3.funcs
 Global CALLBACK_PAINT_PANEL_PAINT:Int = AllocCallbackId("Paint Panel Paint")
 
 Private
-Function GetCreationGroup:TGadget(Gadget:TGadget)
-	Local tmpProxy:TProxyGadget = TProxyGadget(Gadget)
-	If tmpProxy Then Return GetCreationGroup(tmpProxy.proxy)
-	Return gadget
-EndFunction
-
 Function EmitPaintPanelCallback(panel:Skn3PaintPanel)
 	' --- perform the paintpanel user hookable operation ---
 	If panel
@@ -57,14 +61,6 @@ Const ALIGN_TOP:Int = 0
 Const ALIGN_BOTTOM:Int = 2
 
 Private
-Function GetCreationGroup:TGadget(Gadget:TGadget)
-	' --- converts the gadget into the correct group for creating gadget ---
-	'this is also duplicated in maxguiex and stock maxgui (should have been public function)
-	Local tmpProxy:TProxyGadget = TProxyGadget(Gadget)
-	If tmpProxy Then Return GetCreationGroup(tmpProxy.proxy)
-	Return gadget
-EndFunction
-
 Function EmitPaintPanelCallback(panel:Skn3PaintPanel)
 	' --- perform the paintpanel user hookable operation ---
 	'fire maxgui event
