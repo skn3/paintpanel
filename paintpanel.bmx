@@ -7,6 +7,8 @@ End Rem
 Module skn3.paintpanel
 SuperStrict
 
+ModuleInfo "History: 1.01"
+ModuleInfo "History: Mac version done"
 ModuleInfo "History: 1.00"
 ModuleInfo "History: Initial Release To Public"
 
