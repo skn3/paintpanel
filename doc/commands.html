@@ -1,0 +1,247 @@
+<html><head><title>A custom maxgui panel that can perform native painting. reference</title>
+<link rel=stylesheet Type=text/css href='../../../../doc/bmxstyle.css'>
+</head><body>
+<table width=100% cellspacing=0><tr align=center><td class=small>&nbsp;</td>
+<td class=small width=1%><b>skn3.paintpanel:</b></td>
+<td class=small width=1%><a href=#functions class=small>Functions</a></td>
+<td class=small width=1%><a href=#types class=small>Types</a></td>
+<td class=small width=1%><a href=#modinfo class=small>Modinfo</a></td>
+<td class=small width=1%><a href='../../../../mod/skn3.mod/paintpanel.mod/paintpanel.bmx' class=small>Source</a></td>
+<td class=small>&nbsp;</td></tr></table>
+<h1>A custom maxgui panel that can perform native painting.</h1>
+<p>With this moudle you can create a paintpanel which acts like a maxgui panel. The paintpanel will recieve paint messages which allows you to render custom gadgets with native drawing operations.</p>
+<p><b>Important!</b><br />This module only works for windows and osx!</p>
+<h2><a name=functions></a>Functions Summary</h2><table class=doc width=100%>
+<tr><td class=docleft width=1%><a href=#CreatePaintPanel>CreatePaintPanel</a></td><td class=docright>
+Create a new Skn3PaintPanel gadget.
+</td></tr>
+<tr><td class=docleft width=1%><a href=#LoadPaintBitmap>LoadPaintBitmap</a></td><td class=docright>
+Load a bitmap from file or existing pixmap for use with the paintpanel.
+</td></tr>
+</table>
+<h2><a name=types></a>Types Summary</h2><table class=doc width=100%>
+<tr><td class=docleft width=1%><a href=#Skn3PaintPanel>Skn3PaintPanel</a></td><td class=docright>
+A maxgui panel that recieves EVENT_GADGETPAINT and provides an api for painting.
+</td></tr>
+</table>
+<h2
+ id=functionsdet>Functions
+</h2>
+<table class=doc width=100% cellspacing=3 id=CreatePaintPanel>
+<tr><td class=doctop colspan=2>Function CreatePaintPanel:Skn3PaintPanel(x:Int,y:Int,Width:Int,Height:Int,group:TGadget,Style:Int=0)</td></tr>
+<tr><td class=docleft width=1%>Returns</td><td class=docright>Skn3PaintPanel gadget.</td></tr>
+<tr><td class=docleft width=1%>Description</td><td class=docright>Create a new Skn3PaintPanel gadget.</td></tr>
+<tr><td class=docleft width=1%>Information</td><td class=docright><b>Supported Platforms</b>
+<ul>
+<li>Windows</li>
+<li>Mac</li>
+</ul>
+<b>Info</b>
+<p>This will create a new paintpanel gadget. The gadget can be treated like any other maxgui gadget</p>
+<p>Make sure you call RedrawGadget(panel1) after the gadget is created and after your eventhook is setup.</td></tr>
+</table>
+<br>
+<table class=doc width=100% cellspacing=3 id=LoadPaintBitmap>
+<tr><td class=doctop colspan=2>Function LoadPaintBitmap:Skn3PaintBitmap(url:Object)</td></tr>
+<tr><td class=docleft width=1%>Returns</td><td class=docright>nothing.</td></tr>
+<tr><td class=docleft width=1%>Description</td><td class=docright>Load a bitmap from file or existing pixmap for use with the paintpanel.</td></tr>
+<tr><td class=docleft width=1%>Information</td><td class=docright><b>Supported Platforms</b>
+<ul>
+<li>Windows</li>
+<li>Mac</li>
+</ul>
+<b>Info</b>
+<p>You must load images that you want to use on a paintpanel using this function and not blitz built in Image functions. Url can be any valid blitzmax url providing you have enbalbed the apropriate modules.</p></td></tr>
+</table>
+<br>
+<h2
+ id=typesdet>Types
+</h2>
+<table class=doc width=100% cellspacing=3 id=Skn3PaintPanel>
+<tr><td class=doctop colspan=2>Type Skn3PaintPanel Extends TWindowsPanel</td></tr>
+<tr><td class=docleft width=1%>Description</td><td class=docright>A maxgui panel that recieves EVENT_GADGETPAINT and provides an api for painting.</td></tr>
+<tr><td class=docleft width=1%>Information</td><td class=docright><span style="color:red;">If you are not on windows then please just ignore the fact it extends TWindowsPanel.</span><br />
+<b>Supported Platforms</b>
+<ul>
+<li>Windows</li>
+<li>Mac</li>
+</ul>
+<b>Info</b>
+<p>The gadget will fire a EVENT_GADGETPAINT when it needs to be repainted. You can hook into this using normal maxgui event hooking methods.</p></td></tr>
+</table>
+<table class=doc width=90% align=center><tr ><th class=doctop colspan=2 align=left><a name=Skn3PaintPanel_methods></a>Methods Summary</th></tr>
+<tr><td class=docleft width=1%><a href=#PaintBitmap>PaintBitmap</a></td><td class=docright>
+Paint a whole bitmap at given location.
+</td></tr>
+<tr><td class=docleft width=1%><a href=#PaintGradient>PaintGradient</a></td><td class=docright>
+Paint a rectangle gradient.
+</td></tr>
+<tr><td class=docleft width=1%><a href=#PaintLine>PaintLine</a></td><td class=docright>
+Paint a line with variable width.
+</td></tr>
+<tr><td class=docleft width=1%><a href=#PaintOval>PaintOval</a></td><td class=docright>
+Paint an oval/ellipse.
+</td></tr>
+<tr><td class=docleft width=1%><a href=#PaintPoint>PaintPoint</a></td><td class=docright>
+Paint a pixel/point.
+</td></tr>
+<tr><td class=docleft width=1%><a href=#PaintRect>PaintRect</a></td><td class=docright>
+Paint a solid rectangle..
+</td></tr>
+<tr><td class=docleft width=1%><a href=#PaintSubBitmap>PaintSubBitmap</a></td><td class=docright>
+Paint part of a bitmap stretched.
+</td></tr>
+<tr><td class=docleft width=1%><a href=#PaintText>PaintText</a></td><td class=docright>
+Draw text on a single line or wrapped in a box.
+</td></tr>
+<tr><td class=docleft width=1%><a href=#SetPaintBackground>SetPaintBackground</a></td><td class=docright>
+Change panel cls color.
+</td></tr>
+<tr><td class=docleft width=1%><a href=#SetPaintColor>SetPaintColor</a></td><td class=docright>
+Set painting color.
+</td></tr>
+<tr><td class=docleft width=1%><a href=#SetPaintFont>SetPaintFont</a></td><td class=docright>
+change the font used for text paint operations.
+</td></tr>
+</table>
+<table class=doc width=100% cellspacing=3 id=PaintBitmap>
+<tr><td class=doctop colspan=2>Method PaintBitmap(bitmap:Skn3PaintBitmap,x:Int,y:Int)</td></tr>
+<tr><td class=docleft width=1%>Returns</td><td class=docright>nothing.</td></tr>
+<tr><td class=docleft width=1%>Description</td><td class=docright>Paint a whole bitmap at given location.</td></tr>
+<tr><td class=docleft width=1%>Information</td><td class=docright><b>Supported Platforms</b>
+<ul>
+<li>Windows</li>
+<li>Mac</li>
+</ul>
+<b>Info</b>
+<p>This will paint a a bitmap at the given location. See <a href=#LoadPaintBitmap>LoadPaintBitmap</a> to load a bitmap.</p></td></tr>
+</table>
+<table class=doc width=100% cellspacing=3 id=PaintGradient>
+<tr><td class=doctop colspan=2>Method PaintGradient(x:Int,y:Int,Width:Int,Height:Int,vertical:Int=True)</td></tr>
+<tr><td class=docleft width=1%>Returns</td><td class=docright>nothing.</td></tr>
+<tr><td class=docleft width=1%>Description</td><td class=docright>Paint a rectangle gradient.</td></tr>
+<tr><td class=docleft width=1%>Information</td><td class=docright><b>Supported Platforms</b>
+<ul>
+<li>Windows</li>
+<li>Mac</li>
+</ul>
+<b>Info</b>
+<p>Use <a href=#SetPaintColor>SetPaintColor</a> to modify the start and finish gradient colors.</p></td></tr>
+</table>
+<table class=doc width=100% cellspacing=3 id=PaintLine>
+<tr><td class=doctop colspan=2>Method PaintLine(x1:Int,y1:Int,x2:Int,y2:Int,width:Int=1)</td></tr>
+<tr><td class=docleft width=1%>Returns</td><td class=docright>nothing.</td></tr>
+<tr><td class=docleft width=1%>Description</td><td class=docright>Paint a line with variable width.</td></tr>
+<tr><td class=docleft width=1%>Information</td><td class=docright><b>Supported Platforms</b>
+<ul>
+<li>Windows</li>
+<li>Mac</li>
+</ul>
+<b>Info</b>
+<p>This will paint a line between two points using the current color. You can specify an optional width with the last param.</p></td></tr>
+</table>
+<table class=doc width=100% cellspacing=3 id=PaintOval>
+<tr><td class=doctop colspan=2>Method PaintOval(x:Int,y:Int,Width:Int,Height:Int)</td></tr>
+<tr><td class=docleft width=1%>Returns</td><td class=docright>nothing.</td></tr>
+<tr><td class=docleft width=1%>Description</td><td class=docright>Paint an oval/ellipse.</td></tr>
+<tr><td class=docleft width=1%>Information</td><td class=docright><b>Supported Platforms</b>
+<ul>
+<li>Windows</li>
+<li>Mac</li>
+</ul>
+<b>Info</b>
+<p>This will paint an oval/ellipse using the current color.</p></td></tr>
+</table>
+<table class=doc width=100% cellspacing=3 id=PaintPoint>
+<tr><td class=doctop colspan=2>Method PaintPoint(x:Int,y:Int)</td></tr>
+<tr><td class=docleft width=1%>Returns</td><td class=docright>nothing.</td></tr>
+<tr><td class=docleft width=1%>Description</td><td class=docright>Paint a pixel/point.</td></tr>
+<tr><td class=docleft width=1%>Information</td><td class=docright><b>Supported Platforms</b>
+<ul>
+<li>Windows</li>
+<li>Mac</li>
+</ul>
+<b>Info</b>
+<p>This will paint a single pixel/point using the current color.</p></td></tr>
+</table>
+<table class=doc width=100% cellspacing=3 id=PaintRect>
+<tr><td class=doctop colspan=2>Method PaintRect(x:Int,y:Int,Width:Int,Height:Int)</td></tr>
+<tr><td class=docleft width=1%>Returns</td><td class=docright>nothing.</td></tr>
+<tr><td class=docleft width=1%>Description</td><td class=docright>Paint a solid rectangle..</td></tr>
+<tr><td class=docleft width=1%>Information</td><td class=docright><b>Supported Platforms</b>
+<ul>
+<li>Windows</li>
+<li>Mac</li>
+</ul>
+<b>Info</b>
+<p>This will paint a rectangle with the current painting color.</p></td></tr>
+</table>
+<table class=doc width=100% cellspacing=3 id=PaintSubBitmap>
+<tr><td class=doctop colspan=2>Method PaintSubBitmap(bitmap:Skn3PaintBitmap,x:Int,y:Int,Width:Int,Height:Int,sourceX:Int=0,sourceY:Int=0,sourceWidth:Int=-1,sourceHeight:Int=-1)</td></tr>
+<tr><td class=docleft width=1%>Returns</td><td class=docright>nothing.</td></tr>
+<tr><td class=docleft width=1%>Description</td><td class=docright>Paint part of a bitmap stretched.</td></tr>
+<tr><td class=docleft width=1%>Information</td><td class=docright><b>Supported Platforms</b>
+<ul>
+<li>Windows</li>
+<li>Mac</li>
+</ul>
+<b>Info</b>
+<p>This will allow you to paint part of a bitmap at the given location and dimensions. See <a href=#LoadPaintBitmap>LoadPaintBitmap</a> to load a bitmap.</p></td></tr>
+</table>
+<table class=doc width=100% cellspacing=3 id=PaintText>
+<tr><td class=doctop colspan=2>Method PaintText(text:String,x:Int,y:Int,Width:Int=0,Height:Int=0,wrap:Int=False,hAlign:Int=0,vAlign:Int=0)</td></tr>
+<tr><td class=docleft width=1%>Returns</td><td class=docright>nothing.</td></tr>
+<tr><td class=docleft width=1%>Description</td><td class=docright>Draw text on a single line or wrapped in a box.</td></tr>
+<tr><td class=docleft width=1%>Information</td><td class=docright><b>Supported Platforms</b>
+<ul>
+<li>Windows</li>
+<li>Mac</li>
+</ul>
+<b>Info</b>
+<p>This will let you render text in teh current color using various options.</p>
+<p><b>Drawing on a single line similar to DrawText()</b><br />To do this simply call PaintText("hello world",x,y)</p>
+<p><b>Drawing aligned text</b><br />You can align a line of text within a box by providing width, height and alignment params. To draw a single line of text in teh center of an area you would call PaintText("hello world",0,0,200,200,false,ALIGN_CENTER,ALIGN_CENTER)</p>
+<p><b>Drawing wrapped text</b><br />If you need to wrap your text then provide the width and wrap params. You can also specify alignment values and the function will align the entire block of text.</p></td></tr>
+</table>
+<table class=doc width=100% cellspacing=3 id=SetPaintBackground>
+<tr><td class=doctop colspan=2>Method SetPaintBackground(r:Int=-1,g:Int=-1,B:Int=-1)</td></tr>
+<tr><td class=docleft width=1%>Returns</td><td class=docright>nothing.</td></tr>
+<tr><td class=docleft width=1%>Description</td><td class=docright>Change panel cls color.</td></tr>
+<tr><td class=docleft width=1%>Information</td><td class=docright><b>Supported Platforms</b>
+<ul>
+<li>Windows</li>
+<li>Mac</li>
+</ul>
+<b>Info</b>
+<p>This will set the panels background/cls color use (-1,-1,-1) to set transparent.</p></td></tr>
+</table>
+<table class=doc width=100% cellspacing=3 id=SetPaintColor>
+<tr><td class=doctop colspan=2>Method SetPaintColor(r1:Int,g1:Int,b1:Int,r2:Int=-1,g2:Int=-1,b2:Int=-1)</td></tr>
+<tr><td class=docleft width=1%>Returns</td><td class=docright>nothing.</td></tr>
+<tr><td class=docleft width=1%>Description</td><td class=docright>Set painting color.</td></tr>
+<tr><td class=docleft width=1%>Information</td><td class=docright><b>Supported Platforms</b>
+<ul>
+<li>Windows</li>
+<li>Mac</li>
+</ul>
+<b>Info</b>
+<p>The last three params let you modify teh secondary painting color. The secondary painting color is used for operations that require two colors, such as gradients. If you pass -1,-1,-1 for either color then no modifications to that color will occur.</td></tr>
+</table>
+<table class=doc width=100% cellspacing=3 id=SetPaintFont>
+<tr><td class=doctop colspan=2>Method SetPaintFont(font:TGuiFont)</td></tr>
+<tr><td class=docleft width=1%>Returns</td><td class=docright>nothing.</td></tr>
+<tr><td class=docleft width=1%>Description</td><td class=docright>change the font used for text paint operations.</td></tr>
+<tr><td class=docleft width=1%>Information</td><td class=docright><b>Supported Platforms</b>
+<ul>
+<li>Windows</li>
+<li>Mac</li>
+</ul>
+<b>Info</b>
+<p>This uses the maxgui font objects see <a href=#LoadGuiFont>LoadGuiFont</a> or <a href=#LookupGuiFont>LookupGuiFont</a></p></td></tr>
+</table>
+<br>
+<h2 id=modinfo>Module Information</h2>
+<table width=100%>
+<tr><th width=1%>History</th><td>1.00</td></tr>
+<tr><th width=1%>History</th><td>Initial Release To Public</td></tr>
+</body></html>
