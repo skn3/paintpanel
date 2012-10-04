@@ -53,8 +53,11 @@ Function EventHook:Object(id:Int,data:Object,conitemText:Object)
 						panel1.SetPaintColor(0,0,128)
 						panel1.PaintOval(200,150,60,90)
 						
-						panel1.SetPaintColor(0,255,0)
-						panel1.PaintPoint(200,180)
+						'draw a sine wave
+						panel1.SetPaintColor(0,0,0)
+						For Local index:Int = 0 Until 100
+							panel1.PaintPoint(200+index,80+(Sin(index*20)*20))
+						Next
 													
 						panel1.PaintBitmap(bitmap1,50,50)
 						panel1.PaintSubBitmap(bitmap1,20,200,128,64)
