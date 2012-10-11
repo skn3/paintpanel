@@ -8,7 +8,8 @@ Extern "macos"
 	Function Skn3PaintPanelPaintGradient(gadget:TNSGadget,x:Int,y:Int,width:Int,height:Int,vertical:Int)
 	Function Skn3PaintPanelPaintRect(gadget:TNSGadget,x:Int,y:Int,width:Int,height:Int)
 	Function Skn3PaintPanelPaintOval(gadget:TNSGadget,x:Int,y:Int,width:Int,height:Int)
-	Function Skn3PaintPanelPaintText(gadget:TNSGadget,text:String,x:Int,y:Int,width:Int,height:Int,wrap:Int,hAlign:Int,vAlign:Int)
+	Function Skn3PaintPanelPaintText:Int[](Gadget:TNSGadget,text:String,x:Int,y:Int,Width:Int,Height:Int,wrap:Int,hAlign:Int,vAlign:Int)
+	Function Skn3PaintPanelPaintTextDimensions:Int[](gadget:TNSGadget,text:String,x:Int,y:Int,width:Int,height:Int,wrap:Int,hAlign:Int,vAlign:Int)
 	Function Skn3PaintPanelPaintBitmap(gadget:TNSGadget,image:Int,x:Int,y:Int)
 	Function Skn3PaintPanelPaintSubBitmap(gadget:TNSGadget,image:Int,x:Int,y:Int,width:Int,height:Int,sourceX:Int,sourceY:Int,sourceWidth:Int,sourceHeight:Int)
 End Extern
@@ -59,8 +60,12 @@ Type Skn3PaintPanel Extends TNSGadget
 		Skn3PaintPanelPaintOval(Self,x,y,1,1)
 	End Method
 	
-	Method PaintText(text:String,x:Int,y:Int,width:Int=0,height:Int=0,wrap:Int=False,hAlign:Int=ALIGN_LEFT,vAlign:Int=ALIGN_TOP)
+	Method PaintText:Int[](text:String,x:Int,y:Int,Width:Int=0,Height:Int=0,wrap:Int=False,hAlign:Int=ALIGN_LEFT,vAlign:Int=ALIGN_TOP)
 		Skn3PaintPanelPaintText(Self,text,x,y,width,height,wrap,hAlign,vAlign)
+	End Method
+	
+	Method PaintTextDimensions:Int[](text:String,x:Int=0,y:Int=0,Width:Int=0,Height:Int=0,wrap:Int=False,hAlign:Int=0,vAlign:Int=0)
+		Return Skn3PaintPanelPaintTextDimensions(Self,text,x,y,Width,Height,wrap,hAlign,vAlign)
 	End Method
 	
 	Method PaintBitmap(bitmap:Skn3PaintBitmap,x:Int,y:Int)

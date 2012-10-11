@@ -7,6 +7,9 @@ End Rem
 Module skn3.paintpanel
 SuperStrict
 
+ModuleInfo "History: 1.02"
+ModuleInfo "History: Added PaintTextDimensions method"
+ModuleInfo "History: Added PaintText now returns [x,y,width,height] of the text that was just drawn"
 ModuleInfo "History: 1.01"
 ModuleInfo "History: Mac version done"
 ModuleInfo "History: 1.00"
@@ -22,18 +25,8 @@ Import maxgui.drivers
 Import "paintpanel.m"
 ?
 
-Private
-Function GetCreationGroup:TGadget(Gadget:TGadget)
-	' --- converts the gadget into the correct group for creating gadget ---
-	'this is also duplicated in maxguiex and stock maxgui (should have been public function)
-	Local tmpProxy:TProxyGadget = TProxyGadget(Gadget)
-	If tmpProxy Then Return GetCreationGroup(tmpProxy.proxy)
-	Return gadget
-EndFunction
-Public
-
 'skn3 framework code
-rem
+'rem
 Import skn3.callback
 Import skn3.funcs
 
@@ -50,10 +43,10 @@ Function EmitPaintPanelCallback(panel:Skn3PaintPanel)
 	EndIf
 End Function
 Public
-endrem
+'endrem
 
 'maxgui stock code
-'rem
+rem
 Const ALIGN_LEFT:Int = 0
 Const ALIGN_CENTER:Int = 1
 Const ALIGN_RIGHT:Int = 2
@@ -67,7 +60,17 @@ Function EmitPaintPanelCallback(panel:Skn3PaintPanel)
 	If panel EmitEvent(CreateEvent(EVENT_GADGETPAINT,panel,0,0,0,0))
 End Function
 Public
-'endrem
+endrem
+
+Private
+Function GetCreationGroup:TGadget(Gadget:TGadget)
+	' --- converts the gadget into the correct group for creating gadget ---
+	'this is also duplicated in maxguiex and stock maxgui (should have been public function)
+	Local tmpProxy:TProxyGadget = TProxyGadget(Gadget)
+	If tmpProxy Then Return GetCreationGroup(tmpProxy.proxy)
+	Return gadget
+EndFunction
+Public
 
 ?win32
 Include "win.bmx"

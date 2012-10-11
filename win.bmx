@@ -477,7 +477,7 @@ End Rem
 
 Rem
 bbdoc: Draw text on a single line or wrapped in a box.
-returns: nothing.
+returns: an array containing x,y,width,height for the drawn text. This will return a blank array [0,0,0,0] if you are not currently in a painting event.
 about:
 <b>Supported Platforms</b>
 <ul>
@@ -490,10 +490,10 @@ about:
 <p><b>Drawing aligned text</b><br />You can align a line of text within a box by providing width, height and alignment params. To draw a single line of text in teh center of an area you would call PaintText("hello world",0,0,200,200,false,ALIGN_CENTER,ALIGN_CENTER)</p>
 <p><b>Drawing wrapped text</b><br />If you need to wrap your text then provide the width and wrap params. You can also specify alignment values and the function will align the entire block of text.</p>
 End Rem	
-	Method PaintText(text:String,x:Int,y:Int,Width:Int=0,Height:Int=0,wrap:Int=False,hAlign:Int=0,vAlign:Int=0)
+	Method PaintText:Int[](text:String,x:Int,y:Int,Width:Int=0,Height:Int=0,wrap:Int=False,hAlign:Int=0,vAlign:Int=0)
 		' --- render text ---
 		'make sure painting
-		If painting = False Return
+		If painting = False Return [0,0,0,0]
 		
 		Local rect:Int[4]
 		
@@ -557,6 +557,83 @@ End Rem
 		SetBkMode(deviceContext,TRANSPARENT)
 		.SetTextColor(deviceContext,color1RGB)
 		DrawTextW(deviceContext,text,-1,rect,Style)
+		
+		'return it
+		Return rect
+	End Method
+	
+Rem
+bbdoc: Get the dimensions for the given text using the panels current font.
+returns: an array containing x,y,width,height for the drawn text.
+about:
+<b>Supported Platforms</b>
+<ul>
+	<li>Windows</li>
+	<li>Mac</li>
+</ul>
+<b>Info</b>
+<p>This will let you get teh dimensions for the given text. See #PaintText for further details about the params.</p>
+End Rem	
+	Method PaintTextDimensions:Int[](text:String,x:Int=0,y:Int=0,Width:Int=0,Height:Int=0,wrap:Int=False,hAlign:Int=0,vAlign:Int=0)
+		' --- get dimensions for text ---
+		Local rect:Int[4]
+		
+		'get the device context we are using
+		Local hwnd:Int
+		Local deviceContext:Int = Self.deviceContext
+		If deviceContext = 0
+			hwnd = QueryGadget(Self,QUERY_HWND)
+			deviceContext = GetDC(hwnd)
+		EndIf
+		
+		'set the correct font
+		If font SelectFont(font.Handle)
+		
+		'calculate content dimensions
+		rect[0] = 0
+		rect[1] = 0
+		rect[2] = Width
+		rect[3] = 0
+
+		Local calcStyle:Int = DT_CALCRECT | DT_NOCLIP
+		If Width > 0 And wrap calcStyle :| DT_WORDBREAK
+		DrawTextW(deviceContext,text,-1,rect,calcStyle)
+		
+		'align it
+		Local contentX:Int
+		Local contentY:Int
+		Local contentWidth:Int = rect[2]
+		Local contentHeight:Int = rect[3]
+		If Width = 0 Width = contentWidth
+		If Height = 0 Height = contentHeight
+		
+		Select hAlign
+			Case 0
+				contentX = 0
+			Case 1
+				contentX = (Width /2) - (contentWidth/2)
+			Case 2
+				contentX = Width - contentWidth
+		End Select
+		
+		Select vAlign
+			Case 0
+				contentY = 0
+			Case 1
+				contentY = (Height/2) - (contentHeight/2)
+			Case 2
+				contentY = Height-contentHeight
+		End Select
+		
+		'release stuff
+		If Self.deviceContext = 0 ReleaseDC(hwnd,deviceContext)
+		
+		'return it
+		rect[0] = x+contentX
+		rect[1] = y+contentY
+		rect[2] = rect[0]+contentWidth
+		rect[3] = rect[1]+contentHeight
+		Return rect
 	End Method
 
 Rem

@@ -12,19 +12,23 @@
 	extrn	_FillRect@12
 	extrn	_GetClientRect@8
 	extrn	_GetClipBox@8
+	extrn	_GetDC@4
 	extrn	_GetStockObject@4
 	extrn	_GetUpdateRect@12
 	extrn	_GetWindowRect@8
 	extrn	_IsRectEmpty@4
 	extrn	_LineTo@12
 	extrn	_MoveToEx@16
+	extrn	_ReleaseDC@8
 	extrn	_SelectObject@8
 	extrn	_SetBkMode@8
 	extrn	_SetPixel@16
 	extrn	_SetTextColor@8
 	extrn	_StretchBlt@44
 	extrn	___bb_blitz_blitz
+	extrn	___bb_callback_callback
 	extrn	___bb_drivers_drivers
+	extrn	___bb_funcs_funcs
 	extrn	___bb_linkedlist_linkedlist
 	extrn	___bb_pixmap_pixmap
 	extrn	__maxgui_maxgui_TGadget_AddText
@@ -182,13 +186,15 @@
 	extrn	_bbObjectToString
 	extrn	_bbStringClass
 	extrn	_bbStringToWString
-	extrn	_brl_event_CreateEvent
-	extrn	_brl_event_EmitEvent
 	extrn	_brl_pixmap_LoadPixmap
 	extrn	_brl_pixmap_TPixmap
+	extrn	_maxgui_maxgui_QueryGadget
 	extrn	_maxgui_maxgui_TProxyGadget
 	extrn	_maxgui_win32maxguiex_TWindowsGadget
 	extrn	_maxgui_win32maxguiex_TWindowsPanel
+	extrn	_skn3_callback_AllocCallbackId
+	extrn	_skn3_callback_CallbackDataObject
+	extrn	_skn3_callback_FireCallback
 	public	___bb_paintpanel_paintpanel
 	public	__skn3_paintpanel_Skn3PaintBitmap_Delete
 	public	__skn3_paintpanel_Skn3PaintBitmap_New
@@ -203,6 +209,7 @@
 	public	__skn3_paintpanel_Skn3PaintPanel_PaintRect
 	public	__skn3_paintpanel_Skn3PaintPanel_PaintSubBitmap
 	public	__skn3_paintpanel_Skn3PaintPanel_PaintText
+	public	__skn3_paintpanel_Skn3PaintPanel_PaintTextDimensions
 	public	__skn3_paintpanel_Skn3PaintPanel_SelectBitmap
 	public	__skn3_paintpanel_Skn3PaintPanel_SelectBrush
 	public	__skn3_paintpanel_Skn3PaintPanel_SelectFont
@@ -211,6 +218,7 @@
 	public	__skn3_paintpanel_Skn3PaintPanel_SetPaintColor
 	public	__skn3_paintpanel_Skn3PaintPanel_SetPaintFont
 	public	__skn3_paintpanel_Skn3PaintPanel_WndProc
+	public	_skn3_paintpanel_CALLBACK_PAINT_PANEL_PAINT
 	public	_skn3_paintpanel_CreatePaintPanel
 	public	_skn3_paintpanel_LoadPaintBitmap
 	public	_skn3_paintpanel_Skn3PaintBitmap
@@ -219,31 +227,75 @@
 ___bb_paintpanel_paintpanel:
 	push	ebp
 	mov	ebp,esp
-	cmp	dword [_227],0
-	je	_228
+	cmp	dword [_244],0
+	je	_245
 	mov	eax,0
 	mov	esp,ebp
 	pop	ebp
 	ret
-_228:
-	mov	dword [_227],1
+_245:
+	mov	dword [_244],1
 	call	___bb_blitz_blitz
 	call	___bb_linkedlist_linkedlist
 	call	___bb_pixmap_pixmap
 	call	___bb_drivers_drivers
+	call	___bb_callback_callback
+	call	___bb_funcs_funcs
 	push	_skn3_paintpanel_Skn3PaintPanel
 	call	_bbObjectRegisterType
 	add	esp,4
 	push	_skn3_paintpanel_Skn3PaintBitmap
 	call	_bbObjectRegisterType
 	add	esp,4
+	mov	eax,dword [_242]
+	and	eax,1
+	cmp	eax,0
+	jne	_243
+	push	_18
+	call	_skn3_callback_AllocCallbackId
+	add	esp,4
+	mov	dword [_skn3_paintpanel_CALLBACK_PAINT_PANEL_PAINT],eax
+	or	dword [_242],1
+_243:
 	mov	eax,0
-	jmp	_87
-_87:
+	jmp	_91
+_91:
 	mov	esp,ebp
 	pop	ebp
 	ret
-_16:
+_19:
+	push	ebp
+	mov	ebp,esp
+	push	ebx
+	push	esi
+	mov	ebx,dword [ebp+8]
+	cmp	ebx,_bbNullObject
+	je	_246
+	call	_skn3_callback_CallbackDataObject
+	mov	esi,eax
+	inc	dword [ebx+4]
+	mov	eax,dword [esi+80]
+	dec	dword [eax+4]
+	jnz	_251
+	push	eax
+	call	_bbGCFree
+	add	esp,4
+_251:
+	mov	dword [esi+80],ebx
+	push	esi
+	push	dword [_skn3_paintpanel_CALLBACK_PAINT_PANEL_PAINT]
+	call	_skn3_callback_FireCallback
+	add	esp,8
+_246:
+	mov	eax,0
+	jmp	_94
+_94:
+	pop	esi
+	pop	ebx
+	mov	esp,ebp
+	pop	ebp
+	ret
+_20:
 	push	ebp
 	mov	ebp,esp
 	push	ebx
@@ -253,41 +305,16 @@ _16:
 	call	_bbObjectDowncast
 	add	esp,8
 	cmp	eax,_bbNullObject
-	je	_230
+	je	_253
 	push	dword [eax+140]
-	call	_16
+	call	_20
 	add	esp,4
-	jmp	_90
-_230:
+	jmp	_97
+_253:
 	mov	eax,ebx
-	jmp	_90
-_90:
+	jmp	_97
+_97:
 	pop	ebx
-	mov	esp,ebp
-	pop	ebp
-	ret
-_17:
-	push	ebp
-	mov	ebp,esp
-	mov	eax,dword [ebp+8]
-	cmp	eax,_bbNullObject
-	je	_231
-	push	_bbNullObject
-	push	0
-	push	0
-	push	0
-	push	0
-	push	eax
-	push	8194
-	call	_brl_event_CreateEvent
-	add	esp,28
-	push	eax
-	call	_brl_event_EmitEvent
-	add	esp,4
-_231:
-	mov	eax,0
-	jmp	_93
-_93:
 	mov	esp,ebp
 	pop	ebp
 	ret
@@ -314,7 +341,7 @@ __skn3_paintpanel_Skn3PaintPanel_New:
 	mov	dword [ebx+316],0
 	mov	dword [ebx+320],0
 	push	3
-	push	_24
+	push	_27
 	call	_bbArrayNew1D
 	add	esp,8
 	mov	dword [eax+24],-1
@@ -324,7 +351,7 @@ __skn3_paintpanel_Skn3PaintPanel_New:
 	mov	dword [ebx+324],eax
 	mov	dword [ebx+328],0
 	push	3
-	push	_24
+	push	_27
 	call	_bbArrayNew1D
 	add	esp,8
 	mov	dword [eax+24],-1
@@ -335,7 +362,7 @@ __skn3_paintpanel_Skn3PaintPanel_New:
 	mov	dword [ebx+336],0
 	mov	dword [ebx+340],0
 	push	3
-	push	_24
+	push	_27
 	call	_bbArrayNew1D
 	add	esp,8
 	mov	dword [eax+24],-1
@@ -347,7 +374,7 @@ __skn3_paintpanel_Skn3PaintPanel_New:
 	mov	dword [ebx+352],0
 	mov	dword [ebx+356],0
 	push	3
-	push	_24
+	push	_27
 	call	_bbArrayNew1D
 	add	esp,8
 	mov	dword [eax+24],-1
@@ -360,8 +387,8 @@ __skn3_paintpanel_Skn3PaintPanel_New:
 	inc	dword [eax+4]
 	mov	dword [ebx+368],eax
 	mov	eax,0
-	jmp	_96
-_96:
+	jmp	_100
+_100:
 	pop	ebx
 	mov	esp,ebp
 	pop	ebp
@@ -371,49 +398,49 @@ __skn3_paintpanel_Skn3PaintPanel_Delete:
 	mov	ebp,esp
 	push	ebx
 	mov	ebx,dword [ebp+8]
-_99:
+_103:
 	mov	eax,dword [ebx+368]
 	dec	dword [eax+4]
-	jnz	_243
+	jnz	_265
 	push	eax
 	call	_bbGCFree
 	add	esp,4
-_243:
+_265:
 	mov	eax,dword [ebx+360]
 	dec	dword [eax+4]
-	jnz	_245
+	jnz	_267
 	push	eax
 	call	_bbGCFree
 	add	esp,4
-_245:
+_267:
 	mov	eax,dword [ebx+344]
 	dec	dword [eax+4]
-	jnz	_247
+	jnz	_269
 	push	eax
 	call	_bbGCFree
 	add	esp,4
-_247:
+_269:
 	mov	eax,dword [ebx+332]
 	dec	dword [eax+4]
-	jnz	_249
+	jnz	_271
 	push	eax
 	call	_bbGCFree
 	add	esp,4
-_249:
+_271:
 	mov	eax,dword [ebx+324]
 	dec	dword [eax+4]
-	jnz	_251
+	jnz	_273
 	push	eax
 	call	_bbGCFree
 	add	esp,4
-_251:
+_273:
 	mov	dword [ebx],_maxgui_win32maxguiex_TWindowsPanel
 	push	ebx
 	call	__maxgui_win32maxguiex_TWindowsPanel_Delete
 	add	esp,4
 	mov	eax,0
-	jmp	_241
-_241:
+	jmp	_263
+_263:
 	pop	ebx
 	mov	esp,ebp
 	pop	ebp
@@ -426,41 +453,41 @@ __skn3_paintpanel_Skn3PaintPanel_Free:
 	push	edi
 	mov	esi,dword [ebp+8]
 	cmp	dword [esi+328],0
-	je	_252
+	je	_274
 	push	dword [esi+328]
 	call	_DeleteObject@4
-_252:
+_274:
 	cmp	dword [esi+340],0
-	je	_253
+	je	_275
 	push	dword [esi+340]
 	call	_DeleteObject@4
-_253:
+_275:
 	cmp	dword [esi+352],0
-	je	_254
+	je	_276
 	push	dword [esi+352]
 	call	_DeleteObject@4
-_254:
+_276:
 	cmp	dword [esi+356],0
-	je	_255
+	je	_277
 	push	dword [esi+356]
 	call	_DeleteObject@4
-_255:
+_277:
 	mov	ebx,_bbNullObject
 	inc	dword [ebx+4]
 	mov	eax,dword [esi+368]
 	dec	dword [eax+4]
-	jnz	_259
+	jnz	_281
 	push	eax
 	call	_bbGCFree
 	add	esp,4
-_259:
+_281:
 	mov	dword [esi+368],ebx
 	push	esi
 	call	__maxgui_win32maxguiex_TWindowsPanel_Free
 	add	esp,4
 	mov	eax,0
-	jmp	_102
-_102:
+	jmp	_106
+_106:
 	pop	edi
 	pop	esi
 	pop	ebx
@@ -480,27 +507,27 @@ __skn3_paintpanel_Skn3PaintPanel_WndProc:
 	mov	ebx,dword [ebp+20]
 	mov	edx,dword [ebp+24]
 	cmp	eax,20
-	je	_262
-	jmp	_261
-_262:
+	je	_284
+	jmp	_283
+_284:
 	mov	dword [esi+292],ebx
 	push	4
-	push	_263
+	push	_285
 	call	_bbArrayNew1D
 	add	esp,8
 	mov	dword [ebp-12],eax
 	push	4
-	push	_265
+	push	_287
 	call	_bbArrayNew1D
 	add	esp,8
 	mov	dword [ebp-16],eax
 	push	4
-	push	_267
+	push	_289
 	call	_bbArrayNew1D
 	add	esp,8
 	mov	dword [ebp-4],eax
 	push	4
-	push	_269
+	push	_291
 	call	_bbArrayNew1D
 	add	esp,8
 	mov	dword [ebp-8],eax
@@ -526,18 +553,18 @@ _262:
 	push	edi
 	call	_GetUpdateRect@12
 	cmp	eax,0
-	jne	_271
+	jne	_293
 	mov	eax,dword [ebp-4]
 	mov	dword [ebp-16],eax
-_271:
+_293:
 	mov	eax,dword [ebp-16]
 	lea	eax,dword [eax+24]
 	push	eax
 	call	_IsRectEmpty@4
 	cmp	eax,0
-	je	_272
+	je	_294
 	push	4
-	push	_24
+	push	_27
 	call	_bbArrayNew1D
 	add	esp,8
 	mov	dword [eax+24],0
@@ -553,7 +580,7 @@ _271:
 	sub	ecx,dword [edx+4+24]
 	mov	dword [eax+36],ecx
 	mov	dword [ebp-16],eax
-_272:
+_294:
 	mov	eax,dword [ebp-16]
 	mov	eax,dword [eax+24]
 	mov	dword [esi+276],eax
@@ -581,7 +608,7 @@ _272:
 	sub	edx,dword [eax+4+24]
 	mov	dword [esi+320],edx
 	cmp	edi,dword [esi+148]
-	je	_274
+	je	_296
 	push	ebx
 	call	_CreateCompatibleDC@4
 	mov	dword [esi+292],eax
@@ -601,37 +628,37 @@ _272:
 	push	dword [esi+312]
 	push	dword [esi+292]
 	call	_SelectObject@8
-_274:
+_296:
 	cmp	dword [esi+328],0
-	je	_275
+	je	_297
 	push	dword [esi+328]
 	mov	eax,dword [ebp-16]
 	lea	eax,dword [eax+24]
 	push	eax
 	push	dword [esi+292]
 	call	_FillRect@12
-	jmp	_276
-_275:
+	jmp	_298
+_297:
 	push	0
 	push	edi
 	push	dword [esi+292]
 	mov	eax,dword [esi]
 	call	dword [eax+544]
 	add	esp,12
-_276:
+_298:
 	mov	eax,dword [esi+340]
 	cmp	eax,0
 	sete	al
 	movzx	eax,al
 	cmp	eax,0
-	je	_277
+	je	_299
 	mov	eax,dword [esi+352]
 	cmp	eax,0
 	sete	al
 	movzx	eax,al
-_277:
+_299:
 	cmp	eax,0
-	je	_279
+	je	_301
 	mov	eax,esi
 	push	0
 	push	0
@@ -643,10 +670,10 @@ _277:
 	mov	eax,dword [eax]
 	call	dword [eax+600]
 	add	esp,28
-	jmp	_281
-_279:
+	jmp	_303
+_301:
 	cmp	dword [esi+340],0
-	jne	_282
+	jne	_304
 	mov	eax,esi
 	push	-1
 	push	-1
@@ -658,10 +685,10 @@ _279:
 	mov	eax,dword [eax]
 	call	dword [eax+600]
 	add	esp,28
-	jmp	_284
-_282:
+	jmp	_306
+_304:
 	cmp	dword [esi+352],0
-	jne	_285
+	jne	_307
 	mov	eax,esi
 	push	0
 	push	0
@@ -673,12 +700,12 @@ _282:
 	mov	eax,dword [eax]
 	call	dword [eax+600]
 	add	esp,28
-_285:
-_284:
-_281:
+_307:
+_306:
+_303:
 	mov	dword [esi+272],1
 	push	esi
-	call	_17
+	call	_19
 	add	esp,4
 	mov	dword [esi+272],0
 	fld	dword [esi+248]
@@ -690,7 +717,7 @@ _281:
 	setae	al
 	movzx	eax,al
 	cmp	eax,0
-	jne	_287
+	jne	_309
 	push	0
 	push	edi
 	push	ebx
@@ -698,7 +725,7 @@ _281:
 	call	dword [eax+544]
 	add	esp,12
 	fld	dword [esi+248]
-	fmul	dword [_488]
+	fmul	dword [_542]
 	sub	esp,8
 	fstp	qword [esp]
 	call	_bbFloatToInt
@@ -737,8 +764,8 @@ _281:
 	push	dword [eax+24]
 	push	ebx
 	call	_AlphaBlend@44
-	jmp	_289
-_287:
+	jmp	_311
+_309:
 	push	13369376
 	push	0
 	push	0
@@ -757,59 +784,59 @@ _287:
 	push	0
 	push	ebx
 	call	_BitBlt@36
-_289:
+_311:
 	cmp	dword [esi+296],0
-	je	_290
+	je	_312
 	mov	eax,esi
 	push	dword [esi+296]
 	push	eax
 	mov	eax,dword [eax]
 	call	dword [eax+580]
 	add	esp,8
-_290:
+_312:
 	cmp	dword [esi+300],0
-	je	_292
+	je	_314
 	mov	eax,esi
 	push	dword [esi+300]
 	push	eax
 	mov	eax,dword [eax]
 	call	dword [eax+580]
 	add	esp,8
-_292:
+_314:
 	cmp	dword [esi+304],0
-	je	_294
+	je	_316
 	mov	eax,esi
 	push	dword [esi+304]
 	push	eax
 	mov	eax,dword [eax]
 	call	dword [eax+580]
 	add	esp,8
-_294:
+_316:
 	cmp	dword [esi+308],0
-	je	_296
+	je	_318
 	mov	eax,esi
 	push	dword [esi+308]
 	push	eax
 	mov	eax,dword [eax]
 	call	dword [eax+580]
 	add	esp,8
-_296:
+_318:
 	mov	dword [esi+296],0
 	mov	dword [esi+300],0
 	mov	dword [esi+304],0
 	mov	dword [esi+308],0
 	cmp	dword [esi+312],0
-	je	_298
+	je	_320
 	push	dword [esi+312]
 	call	_DeleteObject@4
-_298:
+_320:
 	push	dword [esi+292]
 	call	_DeleteDC@4
 	mov	dword [esi+292],0
 	mov	dword [esi+312],0
 	mov	eax,1
-	jmp	_109
-_261:
+	jmp	_113
+_283:
 	push	edx
 	push	ebx
 	push	eax
@@ -817,8 +844,8 @@ _261:
 	push	esi
 	call	__maxgui_win32maxguiex_TWindowsPanel_WndProc
 	add	esp,20
-	jmp	_109
-_109:
+	jmp	_113
+_113:
 	pop	edi
 	pop	esi
 	pop	ebx
@@ -837,18 +864,18 @@ __skn3_paintpanel_Skn3PaintPanel_SelectPen:
 	push	dword [esi+292]
 	call	_SelectObject@8
 	cmp	dword [esi+296],0
-	jne	_300
+	jne	_322
 	mov	dword [esi+296],eax
-	jmp	_301
-_300:
+	jmp	_323
+_322:
 	cmp	dword [esi+296],ebx
-	jne	_302
+	jne	_324
 	mov	dword [esi+296],0
-_302:
-_301:
+_324:
+_323:
 	mov	eax,0
-	jmp	_113
-_113:
+	jmp	_117
+_117:
 	pop	edi
 	pop	esi
 	pop	ebx
@@ -867,18 +894,18 @@ __skn3_paintpanel_Skn3PaintPanel_SelectBrush:
 	push	dword [esi+292]
 	call	_SelectObject@8
 	cmp	dword [esi+300],0
-	jne	_304
+	jne	_326
 	mov	dword [esi+300],eax
-	jmp	_305
-_304:
+	jmp	_327
+_326:
 	cmp	dword [esi+300],ebx
-	jne	_306
+	jne	_328
 	mov	dword [esi+300],0
-_306:
-_305:
+_328:
+_327:
 	mov	eax,0
-	jmp	_117
-_117:
+	jmp	_121
+_121:
 	pop	edi
 	pop	esi
 	pop	ebx
@@ -897,18 +924,18 @@ __skn3_paintpanel_Skn3PaintPanel_SelectFont:
 	push	dword [esi+292]
 	call	_SelectObject@8
 	cmp	dword [esi+304],0
-	jne	_308
+	jne	_330
 	mov	dword [esi+304],eax
-	jmp	_309
-_308:
+	jmp	_331
+_330:
 	cmp	dword [esi+304],ebx
-	jne	_310
+	jne	_332
 	mov	dword [esi+304],0
-_310:
-_309:
+_332:
+_331:
 	mov	eax,0
-	jmp	_121
-_121:
+	jmp	_125
+_125:
 	pop	edi
 	pop	esi
 	pop	ebx
@@ -927,18 +954,18 @@ __skn3_paintpanel_Skn3PaintPanel_SelectBitmap:
 	push	dword [esi+292]
 	call	_SelectObject@8
 	cmp	dword [esi+308],0
-	jne	_312
+	jne	_334
 	mov	dword [esi+308],eax
-	jmp	_313
-_312:
+	jmp	_335
+_334:
 	cmp	dword [esi+308],ebx
-	jne	_314
+	jne	_336
 	mov	dword [esi+308],0
-_314:
-_313:
+_336:
+_335:
 	mov	eax,0
-	jmp	_125
-_125:
+	jmp	_129
+_129:
 	pop	edi
 	pop	esi
 	pop	ebx
@@ -960,21 +987,21 @@ __skn3_paintpanel_Skn3PaintPanel_SetPaintBackground:
 	setne	al
 	movzx	eax,al
 	cmp	eax,0
-	jne	_315
+	jne	_337
 	mov	eax,dword [ebx+324]
 	cmp	ecx,dword [eax+4+24]
 	setne	al
 	movzx	eax,al
-_315:
+_337:
 	cmp	eax,0
-	jne	_317
+	jne	_339
 	mov	eax,dword [ebx+324]
 	cmp	edx,dword [eax+8+24]
 	setne	al
 	movzx	eax,al
-_317:
+_339:
 	cmp	eax,0
-	je	_319
+	je	_341
 	mov	eax,dword [ebx+324]
 	mov	dword [eax+24],esi
 	mov	eax,dword [ebx+324]
@@ -982,34 +1009,34 @@ _317:
 	mov	eax,dword [ebx+324]
 	mov	dword [eax+8+24],edx
 	cmp	dword [ebx+328],0
-	je	_320
+	je	_342
 	push	dword [ebx+328]
 	call	_DeleteObject@4
 	mov	dword [ebx+328],0
-_320:
+_342:
 	mov	eax,dword [ebx+324]
 	mov	eax,dword [eax+24]
 	cmp	eax,-1
 	setne	al
 	movzx	eax,al
 	cmp	eax,0
-	je	_321
+	je	_343
 	mov	eax,dword [ebx+324]
 	mov	eax,dword [eax+4+24]
 	cmp	eax,-1
 	setne	al
 	movzx	eax,al
-_321:
+_343:
 	cmp	eax,0
-	je	_323
+	je	_345
 	mov	eax,dword [ebx+324]
 	mov	eax,dword [eax+8+24]
 	cmp	eax,-1
 	setne	al
 	movzx	eax,al
-_323:
+_345:
 	cmp	eax,0
-	je	_325
+	je	_347
 	mov	eax,dword [ebx+324]
 	mov	eax,dword [eax+8+24]
 	shl	eax,16
@@ -1022,11 +1049,11 @@ _323:
 	push	eax
 	call	_CreateSolidBrush@4
 	mov	dword [ebx+328],eax
-_325:
-_319:
+_347:
+_341:
 	mov	eax,0
-	jmp	_131
-_131:
+	jmp	_135
+_135:
 	pop	edi
 	pop	esi
 	pop	ebx
@@ -1049,39 +1076,39 @@ __skn3_paintpanel_Skn3PaintPanel_SetPaintColor:
 	setne	al
 	movzx	eax,al
 	cmp	eax,0
-	jne	_326
+	jne	_348
 	mov	eax,dword [ebx+332]
 	cmp	ecx,dword [eax+4+24]
 	setne	al
 	movzx	eax,al
-_326:
+_348:
 	cmp	eax,0
-	jne	_328
+	jne	_350
 	mov	eax,dword [ebx+332]
 	cmp	edx,dword [eax+8+24]
 	setne	al
 	movzx	eax,al
-_328:
+_350:
 	cmp	eax,0
-	je	_330
+	je	_352
 	cmp	esi,-1
 	setne	al
 	movzx	eax,al
-_330:
+_352:
 	cmp	eax,0
-	je	_332
+	je	_354
 	cmp	ecx,-1
 	setne	al
 	movzx	eax,al
-_332:
+_354:
 	cmp	eax,0
-	je	_334
+	je	_356
 	cmp	edx,-1
 	setne	al
 	movzx	eax,al
-_334:
+_356:
 	cmp	eax,0
-	je	_336
+	je	_358
 	mov	eax,dword [ebx+332]
 	mov	dword [eax+24],esi
 	mov	eax,dword [ebx+332]
@@ -1099,11 +1126,11 @@ _334:
 	or	eax,dword [edx+24]
 	mov	dword [ebx+336],eax
 	cmp	dword [ebx+340],0
-	je	_337
+	je	_359
 	push	dword [ebx+340]
 	call	_DeleteObject@4
 	mov	dword [ebx+340],0
-_337:
+_359:
 	mov	eax,dword [ebx+332]
 	mov	eax,dword [eax+8+24]
 	shl	eax,16
@@ -1116,49 +1143,49 @@ _337:
 	push	eax
 	call	_CreateSolidBrush@4
 	mov	dword [ebx+340],eax
-_336:
+_358:
 	mov	edx,dword [ebx+344]
 	mov	eax,dword [ebp+24]
 	cmp	eax,dword [edx+24]
 	setne	al
 	movzx	eax,al
 	cmp	eax,0
-	jne	_338
+	jne	_360
 	mov	eax,dword [ebx+344]
 	cmp	edi,dword [eax+4+24]
 	setne	al
 	movzx	eax,al
-_338:
+_360:
 	cmp	eax,0
-	jne	_340
+	jne	_362
 	mov	edx,dword [ebx+344]
 	mov	eax,dword [ebp+32]
 	cmp	eax,dword [edx+8+24]
 	setne	al
 	movzx	eax,al
-_340:
+_362:
 	cmp	eax,0
-	je	_342
+	je	_364
 	mov	eax,dword [ebp+24]
 	cmp	eax,-1
 	setne	al
 	movzx	eax,al
-_342:
+_364:
 	cmp	eax,0
-	je	_344
+	je	_366
 	cmp	edi,-1
 	setne	al
 	movzx	eax,al
-_344:
+_366:
 	cmp	eax,0
-	je	_346
+	je	_368
 	mov	eax,dword [ebp+32]
 	cmp	eax,-1
 	setne	al
 	movzx	eax,al
-_346:
+_368:
 	cmp	eax,0
-	je	_348
+	je	_370
 	mov	edx,dword [ebx+344]
 	mov	eax,dword [ebp+24]
 	mov	dword [edx+24],eax
@@ -1178,11 +1205,11 @@ _346:
 	or	eax,dword [edx+24]
 	mov	dword [ebx+348],eax
 	cmp	dword [ebx+352],0
-	je	_349
+	je	_371
 	push	dword [ebx+352]
 	call	_DeleteObject@4
 	mov	dword [ebx+352],0
-_349:
+_371:
 	mov	eax,dword [ebx+344]
 	mov	eax,dword [eax+8+24]
 	shl	eax,16
@@ -1195,10 +1222,10 @@ _349:
 	push	eax
 	call	_CreateSolidBrush@4
 	mov	dword [ebx+352],eax
-_348:
+_370:
 	mov	eax,0
-	jmp	_140
-_140:
+	jmp	_144
+_144:
 	pop	edi
 	pop	esi
 	pop	ebx
@@ -1213,20 +1240,20 @@ __skn3_paintpanel_Skn3PaintPanel_SetPaintFont:
 	mov	esi,dword [ebp+8]
 	mov	ebx,dword [ebp+12]
 	cmp	ebx,dword [esi+368]
-	je	_350
+	je	_372
 	inc	dword [ebx+4]
 	mov	eax,dword [esi+368]
 	dec	dword [eax+4]
-	jnz	_354
+	jnz	_376
 	push	eax
 	call	_bbGCFree
 	add	esp,4
-_354:
+_376:
 	mov	dword [esi+368],ebx
-_350:
+_372:
 	mov	eax,0
-	jmp	_144
-_144:
+	jmp	_148
+_148:
 	pop	esi
 	pop	ebx
 	mov	esp,ebp
@@ -1244,17 +1271,17 @@ __skn3_paintpanel_Skn3PaintPanel_PaintGradient:
 	mov	esi,dword [ebp+28]
 	mov	eax,dword [ebp+8]
 	cmp	dword [eax+272],0
-	jne	_355
+	jne	_377
 	mov	eax,0
-	jmp	_152
-_355:
+	jmp	_156
+_377:
 	push	4
-	push	_359
+	push	_381
 	call	_bbArrayNew1D
 	add	esp,8
 	mov	dword [ebp-4],eax
 	cmp	esi,0
-	je	_367
+	je	_389
 	mov	eax,dword [ebp+8]
 	mov	eax,dword [eax+344]
 	mov	edx,dword [eax+24]
@@ -1323,8 +1350,8 @@ _355:
 	mov	dword [edx+12+24],eax
 	mov	edi,0
 	mov	dword [ebp-32],ebx
-	jmp	_368
-_20:
+	jmp	_390
+_23:
 	fld	dword [ebp-8]
 	sub	esp,8
 	fstp	qword [esp]
@@ -1384,18 +1411,18 @@ _20:
 	fld	dword [ebp-8]
 	fadd	dword [ebp-28]
 	fstp	dword [ebp-8]
-_18:
+_21:
 	add	edi,1
-_368:
+_390:
 	cmp	edi,dword [ebp-32]
-	jl	_20
-_19:
-	jmp	_370
-_367:
-_370:
+	jl	_23
+_22:
+	jmp	_392
+_389:
+_392:
 	mov	eax,0
-	jmp	_152
-_152:
+	jmp	_156
+_156:
 	pop	edi
 	pop	esi
 	pop	ebx
@@ -1413,12 +1440,12 @@ __skn3_paintpanel_Skn3PaintPanel_PaintRect:
 	mov	ebx,dword [ebp+12]
 	mov	edi,dword [ebp+16]
 	cmp	dword [esi+272],0
-	jne	_371
+	jne	_393
 	mov	eax,0
-	jmp	_159
-_371:
+	jmp	_163
+_393:
 	push	4
-	push	_24
+	push	_27
 	call	_bbArrayNew1D
 	add	esp,8
 	mov	dword [eax+24],ebx
@@ -1437,8 +1464,8 @@ _371:
 	push	dword [esi+292]
 	call	_FillRect@12
 	mov	eax,0
-	jmp	_159
-_159:
+	jmp	_163
+_163:
 	pop	edi
 	pop	esi
 	pop	ebx
@@ -1456,49 +1483,49 @@ __skn3_paintpanel_Skn3PaintPanel_PaintLine:
 	mov	ebx,dword [ebp+16]
 	mov	edx,dword [ebp+28]
 	cmp	dword [esi+272],0
-	jne	_374
+	jne	_396
 	mov	eax,0
-	jmp	_167
-_374:
+	jmp	_171
+_396:
 	mov	eax,dword [esi+356]
 	cmp	eax,0
 	sete	al
 	movzx	eax,al
 	cmp	eax,0
-	jne	_375
+	jne	_397
 	cmp	edx,dword [esi+364]
 	setne	al
 	movzx	eax,al
-_375:
+_397:
 	cmp	eax,0
-	jne	_377
+	jne	_399
 	mov	eax,dword [esi+360]
 	mov	ecx,dword [eax+24]
 	mov	eax,dword [esi+332]
 	cmp	ecx,dword [eax+24]
 	setne	al
 	movzx	eax,al
-_377:
+_399:
 	cmp	eax,0
-	jne	_379
+	jne	_401
 	mov	eax,dword [esi+360]
 	mov	ecx,dword [eax+4+24]
 	mov	eax,dword [esi+332]
 	cmp	ecx,dword [eax+4+24]
 	setne	al
 	movzx	eax,al
-_379:
+_401:
 	cmp	eax,0
-	jne	_381
+	jne	_403
 	mov	eax,dword [esi+360]
 	mov	ecx,dword [eax+8+24]
 	mov	eax,dword [esi+332]
 	cmp	ecx,dword [eax+8+24]
 	setne	al
 	movzx	eax,al
-_381:
+_403:
 	cmp	eax,0
-	je	_383
+	je	_405
 	mov	eax,dword [esi+360]
 	mov	ecx,dword [esi+332]
 	mov	ecx,dword [ecx+24]
@@ -1513,16 +1540,16 @@ _381:
 	mov	dword [eax+8+24],ecx
 	mov	dword [esi+364],edx
 	cmp	dword [esi+356],0
-	je	_384
+	je	_406
 	push	dword [esi+356]
 	call	_DeleteObject@4
-_384:
+_406:
 	push	dword [esi+336]
 	push	dword [esi+364]
 	push	0
 	call	_CreatePen@12
 	mov	dword [esi+356],eax
-_383:
+_405:
 	mov	eax,esi
 	push	dword [esi+356]
 	push	eax
@@ -1539,8 +1566,8 @@ _383:
 	push	dword [esi+292]
 	call	_LineTo@12
 	mov	eax,0
-	jmp	_167
-_167:
+	jmp	_171
+_171:
 	pop	edi
 	pop	esi
 	pop	ebx
@@ -1557,10 +1584,10 @@ __skn3_paintpanel_Skn3PaintPanel_PaintOval:
 	mov	ebx,dword [ebp+12]
 	mov	edi,dword [ebp+16]
 	cmp	dword [esi+272],0
-	jne	_386
+	jne	_408
 	mov	eax,0
-	jmp	_174
-_386:
+	jmp	_178
+_408:
 	mov	eax,esi
 	push	dword [esi+340]
 	push	eax
@@ -1585,8 +1612,8 @@ _386:
 	push	dword [esi+292]
 	call	_Ellipse@20
 	mov	eax,0
-	jmp	_174
-_174:
+	jmp	_178
+_178:
 	pop	edi
 	pop	esi
 	pop	ebx
@@ -1603,18 +1630,18 @@ __skn3_paintpanel_Skn3PaintPanel_PaintPoint:
 	mov	edx,dword [ebp+12]
 	mov	eax,dword [ebp+16]
 	cmp	dword [ecx+272],0
-	jne	_389
+	jne	_411
 	mov	eax,0
-	jmp	_179
-_389:
+	jmp	_183
+_411:
 	push	dword [ecx+336]
 	push	eax
 	push	edx
 	push	dword [ecx+292]
 	call	_SetPixel@16
 	mov	eax,0
-	jmp	_179
-_179:
+	jmp	_183
+_183:
 	pop	edi
 	pop	esi
 	pop	ebx
@@ -1631,18 +1658,25 @@ __skn3_paintpanel_Skn3PaintPanel_PaintText:
 	mov	edi,dword [ebp+24]
 	mov	eax,dword [ebp+8]
 	cmp	dword [eax+272],0
-	jne	_390
-	mov	eax,0
-	jmp	_190
-_390:
+	jne	_412
 	push	4
-	push	_391
+	push	_27
+	call	_bbArrayNew1D
+	add	esp,8
+	mov	dword [eax+24],0
+	mov	dword [eax+28],0
+	mov	dword [eax+32],0
+	mov	dword [eax+36],0
+	jmp	_194
+_412:
+	push	4
+	push	_414
 	call	_bbArrayNew1D
 	add	esp,8
 	mov	dword [ebp-4],eax
 	mov	eax,dword [ebp+8]
 	cmp	dword [eax+368],_bbNullObject
-	je	_393
+	je	_416
 	mov	edx,dword [ebp+8]
 	mov	eax,dword [ebp+8]
 	mov	eax,dword [eax+368]
@@ -1651,7 +1685,7 @@ _390:
 	mov	eax,dword [edx]
 	call	dword [eax+588]
 	add	esp,8
-_393:
+_416:
 	mov	dword [ebp-8],0
 	mov	dword [ebp-12],0
 	mov	eax,dword [ebp-4]
@@ -1667,13 +1701,13 @@ _393:
 	setg	al
 	movzx	eax,al
 	cmp	eax,0
-	je	_400
+	je	_423
 	mov	eax,dword [ebp+32]
-_400:
+_423:
 	cmp	eax,0
-	je	_402
+	je	_425
 	or	esi,16
-_402:
+_425:
 	push	dword [ebp+12]
 	call	_bbStringToWString
 	add	esp,4
@@ -1695,25 +1729,25 @@ _402:
 	mov	eax,dword [ebp-4]
 	mov	esi,dword [eax+12+24]
 	cmp	edi,0
-	jne	_405
+	jne	_428
 	mov	edi,ecx
-_405:
+_428:
 	cmp	dword [ebp+28],0
-	jne	_406
+	jne	_429
 	mov	dword [ebp+28],esi
-_406:
+_429:
 	mov	eax,dword [ebp+36]
 	cmp	eax,0
-	je	_409
+	je	_432
 	cmp	eax,1
-	je	_410
+	je	_433
 	cmp	eax,2
-	je	_411
-	jmp	_408
-_409:
+	je	_434
+	jmp	_431
+_432:
 	mov	dword [ebp-8],0
-	jmp	_408
-_410:
+	jmp	_431
+_433:
 	mov	eax,edi
 	cdq
 	and	edx,1
@@ -1727,25 +1761,25 @@ _410:
 	sar	eax,1
 	sub	ebx,eax
 	mov	dword [ebp-8],ebx
-	jmp	_408
-_411:
+	jmp	_431
+_434:
 	mov	eax,edi
 	sub	eax,ecx
 	mov	dword [ebp-8],eax
-	jmp	_408
-_408:
+	jmp	_431
+_431:
 	mov	eax,dword [ebp+40]
 	cmp	eax,0
-	je	_414
+	je	_437
 	cmp	eax,1
-	je	_415
+	je	_438
 	cmp	eax,2
-	je	_416
-	jmp	_413
-_414:
+	je	_439
+	jmp	_436
+_437:
 	mov	dword [ebp-12],0
-	jmp	_413
-_415:
+	jmp	_436
+_438:
 	mov	eax,dword [ebp+28]
 	cdq
 	and	edx,1
@@ -1759,21 +1793,21 @@ _415:
 	sar	eax,1
 	sub	ebx,eax
 	mov	dword [ebp-12],ebx
-	jmp	_413
-_416:
+	jmp	_436
+_439:
 	mov	eax,dword [ebp+28]
 	sub	eax,esi
 	mov	dword [ebp-12],eax
-	jmp	_413
-_413:
+	jmp	_436
+_436:
 	mov	ebx,0
 	cmp	dword [ebp+32],0
-	jne	_418
+	jne	_441
 	or	ebx,32
-	jmp	_419
-_418:
+	jmp	_442
+_441:
 	or	ebx,16
-_419:
+_442:
 	mov	edx,dword [ebp-4]
 	mov	eax,dword [ebp+16]
 	add	eax,dword [ebp-8]
@@ -1817,9 +1851,202 @@ _419:
 	push	esi
 	call	_bbMemFree
 	add	esp,4
-	mov	eax,0
-	jmp	_190
-_190:
+	mov	eax,dword [ebp-4]
+	jmp	_194
+_194:
+	pop	edi
+	pop	esi
+	pop	ebx
+	mov	esp,ebp
+	pop	ebp
+	ret
+__skn3_paintpanel_Skn3PaintPanel_PaintTextDimensions:
+	push	ebp
+	mov	ebp,esp
+	sub	esp,20
+	push	ebx
+	push	esi
+	push	edi
+	mov	edi,dword [ebp+24]
+	mov	ebx,dword [ebp+32]
+	push	4
+	push	_445
+	call	_bbArrayNew1D
+	add	esp,8
+	mov	dword [ebp-4],eax
+	mov	dword [ebp-20],0
+	mov	eax,dword [ebp+8]
+	mov	eax,dword [eax+292]
+	mov	dword [ebp-16],eax
+	cmp	dword [ebp-16],0
+	jne	_449
+	push	1
+	push	dword [ebp+8]
+	call	_maxgui_maxgui_QueryGadget
+	add	esp,8
+	mov	dword [ebp-20],eax
+	push	dword [ebp-20]
+	call	_GetDC@4
+	mov	dword [ebp-16],eax
+_449:
+	mov	eax,dword [ebp+8]
+	cmp	dword [eax+368],_bbNullObject
+	je	_450
+	mov	edx,dword [ebp+8]
+	mov	eax,dword [ebp+8]
+	mov	eax,dword [eax+368]
+	push	dword [eax+32]
+	push	edx
+	mov	eax,dword [edx]
+	call	dword [eax+588]
+	add	esp,8
+_450:
+	mov	eax,dword [ebp-4]
+	mov	dword [eax+24],0
+	mov	eax,dword [ebp-4]
+	mov	dword [eax+4+24],0
+	mov	eax,dword [ebp-4]
+	mov	dword [eax+8+24],edi
+	mov	eax,dword [ebp-4]
+	mov	dword [eax+12+24],0
+	mov	esi,1280
+	cmp	edi,0
+	setg	al
+	movzx	eax,al
+	cmp	eax,0
+	je	_453
+	mov	eax,ebx
+_453:
+	cmp	eax,0
+	je	_455
+	or	esi,16
+_455:
+	push	dword [ebp+12]
+	call	_bbStringToWString
+	add	esp,4
+	mov	ebx,eax
+	push	esi
+	mov	eax,dword [ebp-4]
+	lea	eax,dword [eax+24]
+	push	eax
+	push	-1
+	push	ebx
+	push	dword [ebp-16]
+	call	_DrawTextW@20
+	push	ebx
+	call	_bbMemFree
+	add	esp,4
+	mov	ebx,0
+	mov	esi,0
+	mov	eax,dword [ebp-4]
+	mov	eax,dword [eax+8+24]
+	mov	dword [ebp-8],eax
+	mov	eax,dword [ebp-4]
+	mov	eax,dword [eax+12+24]
+	mov	dword [ebp-12],eax
+	cmp	edi,0
+	jne	_462
+	mov	edi,dword [ebp-8]
+_462:
+	cmp	dword [ebp+28],0
+	jne	_463
+	mov	eax,dword [ebp-12]
+	mov	dword [ebp+28],eax
+_463:
+	mov	eax,dword [ebp+36]
+	cmp	eax,0
+	je	_466
+	cmp	eax,1
+	je	_467
+	cmp	eax,2
+	je	_468
+	jmp	_465
+_466:
+	mov	ebx,0
+	jmp	_465
+_467:
+	mov	eax,edi
+	cdq
+	mov	ecx,eax
+	mov	eax,edx
+	and	eax,1
+	add	ecx,eax
+	sar	ecx,1
+	mov	eax,dword [ebp-8]
+	cdq
+	and	edx,1
+	add	eax,edx
+	sar	eax,1
+	sub	ecx,eax
+	mov	ebx,ecx
+	jmp	_465
+_468:
+	mov	eax,edi
+	sub	eax,dword [ebp-8]
+	mov	ebx,eax
+	jmp	_465
+_465:
+	mov	eax,dword [ebp+40]
+	cmp	eax,0
+	je	_471
+	cmp	eax,1
+	je	_472
+	cmp	eax,2
+	je	_473
+	jmp	_470
+_471:
+	mov	esi,0
+	jmp	_470
+_472:
+	mov	eax,dword [ebp+28]
+	cdq
+	mov	ecx,eax
+	mov	eax,edx
+	and	eax,1
+	add	ecx,eax
+	sar	ecx,1
+	mov	eax,dword [ebp-12]
+	cdq
+	and	edx,1
+	add	eax,edx
+	sar	eax,1
+	sub	ecx,eax
+	mov	esi,ecx
+	jmp	_470
+_473:
+	mov	eax,dword [ebp+28]
+	sub	eax,dword [ebp-12]
+	mov	esi,eax
+	jmp	_470
+_470:
+	mov	eax,dword [ebp+8]
+	cmp	dword [eax+292],0
+	jne	_474
+	push	dword [ebp-16]
+	push	dword [ebp-20]
+	call	_ReleaseDC@8
+_474:
+	mov	edx,dword [ebp-4]
+	mov	eax,dword [ebp+16]
+	add	eax,ebx
+	mov	dword [edx+24],eax
+	mov	edx,dword [ebp-4]
+	mov	eax,dword [ebp+20]
+	add	eax,esi
+	mov	dword [edx+4+24],eax
+	mov	edx,dword [ebp-4]
+	mov	eax,dword [ebp-4]
+	mov	eax,dword [eax+24]
+	add	eax,dword [ebp-8]
+	mov	dword [edx+8+24],eax
+	mov	edx,dword [ebp-4]
+	mov	eax,dword [ebp-4]
+	mov	eax,dword [eax+4+24]
+	add	eax,dword [ebp-12]
+	mov	dword [edx+12+24],eax
+	mov	eax,dword [ebp-4]
+	jmp	_205
+_205:
 	pop	edi
 	pop	esi
 	pop	ebx
@@ -1845,11 +2072,11 @@ __skn3_paintpanel_Skn3PaintPanel_PaintBitmap:
 	push	ebx
 	push	eax
 	mov	eax,dword [eax]
-	call	dword [eax+636]
+	call	dword [eax+640]
 	add	esp,40
 	mov	eax,0
-	jmp	_196
-_196:
+	jmp	_211
+_211:
 	pop	ebx
 	mov	esp,ebp
 	pop	ebp
@@ -1869,16 +2096,16 @@ __skn3_paintpanel_Skn3PaintPanel_PaintSubBitmap:
 	sete	al
 	movzx	eax,al
 	cmp	eax,0
-	jne	_423
+	jne	_476
 	cmp	esi,_bbNullObject
 	sete	al
 	movzx	eax,al
-_423:
+_476:
 	cmp	eax,0
-	je	_425
+	je	_478
 	mov	eax,0
-	jmp	_208
-_425:
+	jmp	_223
+_478:
 	mov	eax,dword [ebp+8]
 	push	dword [eax+292]
 	call	_CreateCompatibleDC@4
@@ -1891,23 +2118,23 @@ _425:
 	sete	al
 	movzx	eax,al
 	cmp	eax,0
-	jne	_428
+	jne	_481
 	mov	eax,dword [ebp+44]
 	cmp	eax,-1
 	sete	al
 	movzx	eax,al
-_428:
+_481:
 	cmp	eax,0
-	je	_430
+	je	_483
 	mov	eax,dword [esi+12]
 	sub	eax,dword [ebp+32]
 	mov	edi,eax
 	mov	eax,dword [esi+16]
 	sub	eax,dword [ebp+36]
 	mov	dword [ebp+44],eax
-_430:
+_483:
 	cmp	dword [esi+20],0
-	je	_431
+	je	_484
 	push	33488896
 	push	dword [ebp+44]
 	push	edi
@@ -1921,34 +2148,34 @@ _430:
 	mov	eax,dword [ebp+8]
 	push	dword [eax+292]
 	call	_AlphaBlend@44
-	jmp	_432
-_431:
+	jmp	_485
+_484:
 	mov	eax,dword [ebp+32]
 	cmp	eax,0
 	sete	al
 	movzx	eax,al
 	cmp	eax,0
-	je	_433
+	je	_486
 	mov	eax,dword [ebp+36]
 	cmp	eax,0
 	sete	al
 	movzx	eax,al
-_433:
+_486:
 	cmp	eax,0
-	je	_435
+	je	_488
 	cmp	edi,dword [ebp+24]
 	sete	al
 	movzx	eax,al
-_435:
+_488:
 	cmp	eax,0
-	je	_437
+	je	_490
 	mov	eax,dword [ebp+44]
 	cmp	eax,dword [ebp+28]
 	sete	al
 	movzx	eax,al
-_437:
+_490:
 	cmp	eax,0
-	je	_439
+	je	_492
 	push	13369376
 	push	0
 	push	0
@@ -1960,8 +2187,8 @@ _437:
 	mov	eax,dword [ebp+8]
 	push	dword [eax+292]
 	call	_BitBlt@36
-	jmp	_440
-_439:
+	jmp	_493
+_492:
 	push	13369376
 	push	dword [ebp+44]
 	push	edi
@@ -1975,16 +2202,16 @@ _439:
 	mov	eax,dword [ebp+8]
 	push	dword [eax+292]
 	call	_StretchBlt@44
-_440:
-_432:
+_493:
+_485:
 	push	dword [ebp-4]
 	push	ebx
 	call	_SelectObject@8
 	push	ebx
 	call	_DeleteDC@4
 	mov	eax,0
-	jmp	_208
-_208:
+	jmp	_223
+_223:
 	pop	edi
 	pop	esi
 	pop	ebx
@@ -2001,7 +2228,7 @@ _skn3_paintpanel_CreatePaintPanel:
 	mov	esi,dword [ebp+24]
 	mov	ebx,dword [ebp+28]
 	push	esi
-	call	_16
+	call	_20
 	add	esp,4
 	mov	esi,eax
 	push	_skn3_paintpanel_Skn3PaintPanel
@@ -2016,7 +2243,7 @@ _skn3_paintpanel_CreatePaintPanel:
 	add	esp,16
 	mov	ebx,eax
 	cmp	esi,_bbNullObject
-	je	_443
+	je	_496
 	mov	eax,ebx
 	push	-1
 	push	esi
@@ -2024,7 +2251,7 @@ _skn3_paintpanel_CreatePaintPanel:
 	mov	eax,dword [eax]
 	call	dword [eax+56]
 	add	esp,12
-_443:
+_496:
 	mov	eax,ebx
 	push	dword [ebp+20]
 	push	dword [ebp+16]
@@ -2039,7 +2266,7 @@ _443:
 	call	_bbObjectDowncast
 	add	esp,8
 	cmp	eax,_bbNullObject
-	je	_446
+	je	_499
 	mov	eax,ebx
 	push	dword [__maxgui_win32maxguiex_TWindowsGUIDriver_GDIFont]
 	push	eax
@@ -2051,7 +2278,7 @@ _443:
 	call	_bbObjectDowncast
 	add	esp,8
 	cmp	eax,_bbNullObject
-	je	_448
+	je	_501
 	push	_maxgui_win32maxguiex_TWindowsGadget
 	push	ebx
 	call	_bbObjectDowncast
@@ -2063,7 +2290,7 @@ _443:
 	add	esp,8
 	mov	eax,dword [eax+232]
 	cmp	eax,0
-	je	_450
+	je	_503
 	push	_maxgui_win32maxguiex_TWindowsGadget
 	push	esi
 	call	_bbObjectDowncast
@@ -2072,7 +2299,7 @@ _443:
 	cmp	eax,0
 	sete	al
 	movzx	eax,al
-_450:
+_503:
 	cmp	eax,0
 	sete	al
 	movzx	eax,al
@@ -2091,7 +2318,7 @@ _450:
 	mov	eax,dword [ebx]
 	call	dword [eax+284]
 	add	esp,8
-_448:
+_501:
 	mov	eax,ebx
 	push	0
 	push	1
@@ -2099,13 +2326,13 @@ _448:
 	mov	eax,dword [eax]
 	call	dword [eax+280]
 	add	esp,12
-_446:
+_499:
 	push	_maxgui_win32maxguiex_TWindowsGadget
 	push	ebx
 	call	_bbObjectDowncast
 	add	esp,8
 	cmp	eax,_bbNullObject
-	je	_455
+	je	_508
 	push	_maxgui_win32maxguiex_TWindowsGadget
 	push	ebx
 	call	_bbObjectDowncast
@@ -2114,13 +2341,13 @@ _446:
 	mov	eax,dword [eax]
 	call	dword [eax+548]
 	add	esp,4
-_455:
+_508:
 	push	_skn3_paintpanel_Skn3PaintPanel
 	push	ebx
 	call	_bbObjectDowncast
 	add	esp,8
-	jmp	_216
-_216:
+	jmp	_231
+_231:
 	pop	edi
 	pop	esi
 	pop	ebx
@@ -2141,8 +2368,8 @@ __skn3_paintpanel_Skn3PaintBitmap_New:
 	mov	dword [ebx+16],0
 	mov	dword [ebx+20],0
 	mov	eax,0
-	jmp	_219
-_219:
+	jmp	_234
+_234:
 	pop	ebx
 	mov	esp,ebp
 	pop	ebp
@@ -2155,15 +2382,15 @@ __skn3_paintpanel_Skn3PaintBitmap_Delete:
 	push	edi
 	mov	ebx,dword [ebp+8]
 	cmp	dword [ebx+8],0
-	je	_457
+	je	_510
 	push	dword [ebx+8]
 	call	_DeleteObject@4
 	mov	dword [ebx+8],0
-_457:
-_222:
+_510:
+_237:
 	mov	eax,0
-	jmp	_458
-_458:
+	jmp	_511
+_511:
 	pop	edi
 	pop	esi
 	pop	ebx
@@ -2187,54 +2414,54 @@ _skn3_paintpanel_LoadPaintBitmap:
 	add	esp,8
 	mov	ebx,eax
 	cmp	ebx,_bbNullObject
-	jne	_461
+	jne	_514
 	push	esi
 	call	_brl_pixmap_LoadPixmap
 	add	esp,4
 	mov	ebx,eax
-_461:
+_514:
 	cmp	ebx,_bbNullObject
-	jne	_462
+	jne	_515
 	mov	eax,_bbNullObject
-	jmp	_225
-_462:
+	jmp	_240
+_515:
 	mov	eax,dword [ebx+24]
 	cmp	eax,6
 	sete	al
 	movzx	eax,al
 	cmp	eax,0
-	jne	_463
+	jne	_516
 	mov	eax,dword [ebx+24]
 	cmp	eax,5
 	sete	al
 	movzx	eax,al
-_463:
+_516:
 	cmp	eax,0
-	je	_465
+	je	_518
 	push	ebx
 	call	__maxgui_win32maxguiex_TWindowsGraphic_PreMultipliedBitmapFromPixmap32
 	add	esp,4
 	mov	dword [edi+8],eax
-_465:
+_518:
 	cmp	dword [edi+8],0
-	je	_466
+	je	_519
 	mov	dword [edi+20],1
-	jmp	_467
-_466:
+	jmp	_520
+_519:
 	push	0
 	push	ebx
 	call	__maxgui_win32maxguiex_TWindowsGraphic_BitmapFromPixmap
 	add	esp,8
 	mov	dword [edi+8],eax
 	mov	dword [edi+20],0
-_467:
+_520:
 	mov	eax,dword [ebx+12]
 	mov	dword [edi+12],eax
 	mov	eax,dword [ebx+16]
 	mov	dword [edi+16],eax
 	mov	eax,edi
-	jmp	_225
-_225:
+	jmp	_240
+_240:
 	pop	edi
 	pop	esi
 	pop	ebx
@@ -2243,312 +2470,318 @@ _225:
 	ret
 	section	"data" data writeable align 8
 	align	4
-_227:
+_244:
 	dd	0
-_22:
-	db	"Skn3PaintPanel",0
-_23:
-	db	"painting",0
-_24:
-	db	"i",0
 _25:
-	db	"paintingX",0
+	db	"Skn3PaintPanel",0
 _26:
-	db	"paintingY",0
+	db	"painting",0
 _27:
-	db	"paintingWidth",0
+	db	"i",0
 _28:
-	db	"paintingHeight",0
+	db	"paintingX",0
 _29:
-	db	"deviceContext",0
+	db	"paintingY",0
 _30:
-	db	"oldPen",0
+	db	"paintingWidth",0
 _31:
-	db	"oldBrush",0
+	db	"paintingHeight",0
 _32:
-	db	"oldFont",0
+	db	"deviceContext",0
 _33:
-	db	"oldBitmap",0
+	db	"oldPen",0
 _34:
-	db	"buffer",0
+	db	"oldBrush",0
 _35:
-	db	"bufferWidth",0
+	db	"oldFont",0
 _36:
-	db	"bufferHeight",0
+	db	"oldBitmap",0
 _37:
-	db	"backgroundColor",0
+	db	"buffer",0
 _38:
-	db	"[]i",0
+	db	"bufferWidth",0
 _39:
-	db	"backgroundColorBrush",0
+	db	"bufferHeight",0
 _40:
-	db	"color1",0
+	db	"backgroundColor",0
 _41:
-	db	"color1RGB",0
+	db	"[]i",0
 _42:
-	db	"color1Brush",0
+	db	"backgroundColorBrush",0
 _43:
-	db	"color2",0
+	db	"color1",0
 _44:
-	db	"color2RGB",0
+	db	"color1RGB",0
 _45:
-	db	"color2Brush",0
+	db	"color1Brush",0
 _46:
-	db	"pen",0
+	db	"color2",0
 _47:
-	db	"penColor",0
+	db	"color2RGB",0
 _48:
-	db	"penWidth",0
+	db	"color2Brush",0
 _49:
-	db	"font",0
+	db	"pen",0
 _50:
-	db	":maxgui.maxgui.TGuiFont",0
+	db	"penColor",0
 _51:
-	db	"New",0
+	db	"penWidth",0
 _52:
-	db	"()i",0
+	db	"font",0
 _53:
-	db	"Delete",0
+	db	":maxgui.maxgui.TGuiFont",0
 _54:
-	db	"Free",0
+	db	"New",0
 _55:
-	db	"WndProc",0
+	db	"()i",0
 _56:
-	db	"(i,i,i,i)i",0
+	db	"Delete",0
 _57:
-	db	"SelectPen",0
+	db	"Free",0
 _58:
-	db	"(i)i",0
+	db	"WndProc",0
 _59:
-	db	"SelectBrush",0
+	db	"(i,i,i,i)i",0
 _60:
-	db	"SelectFont",0
+	db	"SelectPen",0
 _61:
-	db	"SelectBitmap",0
+	db	"(i)i",0
 _62:
-	db	"SetPaintBackground",0
+	db	"SelectBrush",0
 _63:
-	db	"(i,i,i)i",0
+	db	"SelectFont",0
 _64:
-	db	"SetPaintColor",0
+	db	"SelectBitmap",0
 _65:
-	db	"(i,i,i,i,i,i)i",0
+	db	"SetPaintBackground",0
 _66:
-	db	"SetPaintFont",0
+	db	"(i,i,i)i",0
 _67:
-	db	"(:maxgui.maxgui.TGuiFont)i",0
+	db	"SetPaintColor",0
 _68:
-	db	"PaintGradient",0
+	db	"(i,i,i,i,i,i)i",0
 _69:
-	db	"(i,i,i,i,i)i",0
+	db	"SetPaintFont",0
 _70:
-	db	"PaintRect",0
+	db	"(:maxgui.maxgui.TGuiFont)i",0
 _71:
-	db	"PaintLine",0
+	db	"PaintGradient",0
 _72:
-	db	"PaintOval",0
+	db	"(i,i,i,i,i)i",0
 _73:
-	db	"PaintPoint",0
+	db	"PaintRect",0
 _74:
-	db	"(i,i)i",0
+	db	"PaintLine",0
 _75:
-	db	"PaintText",0
+	db	"PaintOval",0
 _76:
-	db	"($,i,i,i,i,i,i,i)i",0
+	db	"PaintPoint",0
 _77:
-	db	"PaintBitmap",0
+	db	"(i,i)i",0
 _78:
-	db	"(:Skn3PaintBitmap,i,i)i",0
+	db	"PaintText",0
 _79:
-	db	"PaintSubBitmap",0
+	db	"($,i,i,i,i,i,i,i)[]i",0
 _80:
+	db	"PaintTextDimensions",0
+_81:
+	db	"PaintBitmap",0
+_82:
+	db	"(:Skn3PaintBitmap,i,i)i",0
+_83:
+	db	"PaintSubBitmap",0
+_84:
 	db	"(:Skn3PaintBitmap,i,i,i,i,i,i,i,i)i",0
 	align	4
-_21:
+_24:
 	dd	2
-	dd	_22
-	dd	3
-	dd	_23
-	dd	_24
-	dd	272
-	dd	3
 	dd	_25
-	dd	_24
-	dd	276
 	dd	3
 	dd	_26
-	dd	_24
-	dd	280
-	dd	3
 	dd	_27
-	dd	_24
-	dd	284
+	dd	272
 	dd	3
 	dd	_28
-	dd	_24
-	dd	288
+	dd	_27
+	dd	276
 	dd	3
 	dd	_29
-	dd	_24
-	dd	292
+	dd	_27
+	dd	280
 	dd	3
 	dd	_30
-	dd	_24
-	dd	296
+	dd	_27
+	dd	284
 	dd	3
 	dd	_31
-	dd	_24
-	dd	300
+	dd	_27
+	dd	288
 	dd	3
 	dd	_32
-	dd	_24
-	dd	304
+	dd	_27
+	dd	292
 	dd	3
 	dd	_33
-	dd	_24
-	dd	308
+	dd	_27
+	dd	296
 	dd	3
 	dd	_34
-	dd	_24
-	dd	312
+	dd	_27
+	dd	300
 	dd	3
 	dd	_35
-	dd	_24
-	dd	316
+	dd	_27
+	dd	304
 	dd	3
 	dd	_36
-	dd	_24
-	dd	320
+	dd	_27
+	dd	308
 	dd	3
 	dd	_37
+	dd	_27
+	dd	312
+	dd	3
 	dd	_38
-	dd	324
+	dd	_27
+	dd	316
 	dd	3
 	dd	_39
-	dd	_24
-	dd	328
+	dd	_27
+	dd	320
 	dd	3
 	dd	_40
-	dd	_38
-	dd	332
-	dd	3
 	dd	_41
-	dd	_24
-	dd	336
+	dd	324
 	dd	3
 	dd	_42
-	dd	_24
-	dd	340
+	dd	_27
+	dd	328
 	dd	3
 	dd	_43
-	dd	_38
-	dd	344
+	dd	_41
+	dd	332
 	dd	3
 	dd	_44
-	dd	_24
-	dd	348
+	dd	_27
+	dd	336
 	dd	3
 	dd	_45
-	dd	_24
-	dd	352
+	dd	_27
+	dd	340
 	dd	3
 	dd	_46
-	dd	_24
-	dd	356
+	dd	_41
+	dd	344
 	dd	3
 	dd	_47
-	dd	_38
-	dd	360
+	dd	_27
+	dd	348
 	dd	3
 	dd	_48
-	dd	_24
-	dd	364
+	dd	_27
+	dd	352
 	dd	3
 	dd	_49
+	dd	_27
+	dd	356
+	dd	3
 	dd	_50
+	dd	_41
+	dd	360
+	dd	3
+	dd	_51
+	dd	_27
+	dd	364
+	dd	3
+	dd	_52
+	dd	_53
 	dd	368
 	dd	6
-	dd	_51
-	dd	_52
+	dd	_54
+	dd	_55
 	dd	16
 	dd	6
-	dd	_53
-	dd	_52
+	dd	_56
+	dd	_55
 	dd	20
 	dd	6
-	dd	_54
-	dd	_52
+	dd	_57
+	dd	_55
 	dd	212
 	dd	6
-	dd	_55
-	dd	_56
+	dd	_58
+	dd	_59
 	dd	520
 	dd	6
-	dd	_57
-	dd	_58
+	dd	_60
+	dd	_61
 	dd	580
 	dd	6
-	dd	_59
-	dd	_58
+	dd	_62
+	dd	_61
 	dd	584
 	dd	6
-	dd	_60
-	dd	_58
+	dd	_63
+	dd	_61
 	dd	588
 	dd	6
+	dd	_64
 	dd	_61
-	dd	_58
 	dd	592
 	dd	6
-	dd	_62
-	dd	_63
+	dd	_65
+	dd	_66
 	dd	596
 	dd	6
-	dd	_64
-	dd	_65
+	dd	_67
+	dd	_68
 	dd	600
 	dd	6
-	dd	_66
-	dd	_67
+	dd	_69
+	dd	_70
 	dd	604
 	dd	6
-	dd	_68
-	dd	_69
+	dd	_71
+	dd	_72
 	dd	608
 	dd	6
-	dd	_70
-	dd	_56
+	dd	_73
+	dd	_59
 	dd	612
 	dd	6
-	dd	_71
-	dd	_69
+	dd	_74
+	dd	_72
 	dd	616
 	dd	6
-	dd	_72
-	dd	_56
+	dd	_75
+	dd	_59
 	dd	620
 	dd	6
-	dd	_73
-	dd	_74
+	dd	_76
+	dd	_77
 	dd	624
 	dd	6
-	dd	_75
-	dd	_76
+	dd	_78
+	dd	_79
 	dd	628
 	dd	6
-	dd	_77
-	dd	_78
+	dd	_80
+	dd	_79
 	dd	632
 	dd	6
-	dd	_79
-	dd	_80
+	dd	_81
+	dd	_82
 	dd	636
+	dd	6
+	dd	_83
+	dd	_84
+	dd	640
 	dd	0
 	align	4
 _skn3_paintpanel_Skn3PaintPanel:
 	dd	_maxgui_win32maxguiex_TWindowsPanel
 	dd	_bbObjectFree
-	dd	_21
+	dd	_24
 	dd	372
 	dd	__skn3_paintpanel_Skn3PaintPanel_New
 	dd	__skn3_paintpanel_Skn3PaintPanel_Delete
@@ -2704,52 +2937,53 @@ _skn3_paintpanel_Skn3PaintPanel:
 	dd	__skn3_paintpanel_Skn3PaintPanel_PaintOval
 	dd	__skn3_paintpanel_Skn3PaintPanel_PaintPoint
 	dd	__skn3_paintpanel_Skn3PaintPanel_PaintText
+	dd	__skn3_paintpanel_Skn3PaintPanel_PaintTextDimensions
 	dd	__skn3_paintpanel_Skn3PaintPanel_PaintBitmap
 	dd	__skn3_paintpanel_Skn3PaintPanel_PaintSubBitmap
-_82:
-	db	"Skn3PaintBitmap",0
-_83:
-	db	"bitmap",0
-_84:
-	db	"Width",0
-_85:
-	db	"Height",0
 _86:
+	db	"Skn3PaintBitmap",0
+_87:
+	db	"bitmap",0
+_88:
+	db	"Width",0
+_89:
+	db	"Height",0
+_90:
 	db	"hasAlpha",0
 	align	4
-_81:
+_85:
 	dd	2
-	dd	_82
+	dd	_86
 	dd	3
-	dd	_83
-	dd	_24
+	dd	_87
+	dd	_27
 	dd	8
 	dd	3
-	dd	_84
-	dd	_24
+	dd	_88
+	dd	_27
 	dd	12
 	dd	3
-	dd	_85
-	dd	_24
+	dd	_89
+	dd	_27
 	dd	16
 	dd	3
-	dd	_86
-	dd	_24
+	dd	_90
+	dd	_27
 	dd	20
 	dd	6
-	dd	_51
-	dd	_52
+	dd	_54
+	dd	_55
 	dd	16
 	dd	6
-	dd	_53
-	dd	_52
+	dd	_56
+	dd	_55
 	dd	20
 	dd	0
 	align	4
 _skn3_paintpanel_Skn3PaintBitmap:
 	dd	_bbObjectClass
 	dd	_bbObjectFree
-	dd	_81
+	dd	_85
 	dd	24
 	dd	__skn3_paintpanel_Skn3PaintBitmap_New
 	dd	__skn3_paintpanel_Skn3PaintBitmap_Delete
@@ -2759,20 +2993,35 @@ _skn3_paintpanel_Skn3PaintBitmap:
 	dd	_bbObjectReserved
 	dd	_bbObjectReserved
 	dd	_bbObjectReserved
-_263:
+	align	4
+_242:
+	dd	0
+	align	4
+_18:
+	dd	_bbStringClass
+	dd	2147483647
+	dd	17
+	dw	80,97,105,110,116,32,80,97,110,101,108,32,80,97,105,110
+	dw	116
+	align	4
+_skn3_paintpanel_CALLBACK_PAINT_PANEL_PAINT:
+	dd	0
+_285:
 	db	"i",0
-_265:
+_287:
 	db	"i",0
-_267:
+_289:
 	db	"i",0
-_269:
+_291:
 	db	"i",0
 	align	4
-_488:
+_542:
 	dd	0x437f0000
-_359:
+_381:
 	db	"i",0
-_391:
+_414:
+	db	"i",0
+_445:
 	db	"i",0
 	align	4
 _1:

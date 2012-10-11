@@ -181,10 +181,17 @@
 	[path removeAllPoints];
 }
 
--(void)paintText:(NSString*)text x:(int)x y:(int)y width:(int)width height:(int)height wrap:(int)wrap hAlign:(int)hAlign vAlign:(int)vAlign {
+-(BBArray *)paintText:(NSString*)text x:(int)x y:(int)y width:(int)width height:(int)height wrap:(int)wrap hAlign:(int)hAlign vAlign:(int)vAlign {
 	// --- paint some text ---
+	BBArray *result = bbArrayNew1D("i",4);
+	int *resultPointer = (int*)BBARRAYDATA(result,1);
+	resultPointer[0] = 0;
+	resultPointer[1] = 0;
+	resultPointer[2] = 0;
+	resultPointer[3] = 0;
+	
 	//make sure painting
-	if (painting == NO) { return; }
+	if (painting == NO) { return result; }
 	
 	//this should be moved out of here at some point
 	NSDictionary *textAttributes = [NSDictionary dictionaryWithObjectsAndKeys:color1, NSForegroundColorAttributeName, font, NSFontAttributeName,nil];
@@ -196,44 +203,110 @@
 	} else {
 		maxSize = NSMakeSize(width,0.0);
 	}
-	NSRect contentSize = [text boundingRectWithSize:maxSize options:NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingDisableScreenFontSubstitution attributes:textAttributes];
+	NSRect rect = [text boundingRectWithSize:maxSize options:NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingDisableScreenFontSubstitution attributes:textAttributes];
 	
-	if (width == 0) { width = contentSize.size.width; }
-	if (height == 0) { height = contentSize.size.height; }
+	if (width == 0) { width = rect.size.width; }
+	if (height == 0) { height = rect.size.height; }
 	
 	//align content position
 	switch(hAlign) {
 		case 0:
 			//left
-			contentSize.origin.x = x;
+			rect.origin.x = x;
 			break;
 		case 1:
 			//center
-			contentSize.origin.x = x+(width/2)-(contentSize.size.width/2);
+			rect.origin.x = x+(width/2)-(rect.size.width/2);
 			break;
 		case 2:
 			//right
-			contentSize.origin.x = x+width-contentSize.size.width;;
+			rect.origin.x = x+width-rect.size.width;;
 			break;
 	}
 	
 	switch(vAlign) {
 		case 0:
 			//top
-			contentSize.origin.y = y;
+			rect.origin.y = y;
 			break;
 		case 1:
 			//center
-			contentSize.origin.y = y+(height/2)-(contentSize.size.height/2);
+			rect.origin.y = y+(height/2)-(rect.size.height/2);
 			break;
 		case 2:
 			//bottom
-			contentSize.origin.y = y+height-contentSize.size.height;;
+			rect.origin.y = y+height-rect.size.height;;
 			break;
 	}
 	
 	//draw
-	[text drawInRect:contentSize withAttributes:textAttributes];
+	[text drawInRect:rect withAttributes:textAttributes];
+	
+	//now return the dimensions as a blitz array
+	resultPointer[0] = (int)rect.origin.x;
+	resultPointer[1] = (int)rect.origin.y;
+	resultPointer[2] = (int)rect.size.width;
+	resultPointer[3] = (int)rect.size.height;
+	return result;
+}
+
+-(BBArray *)paintTextDimensions:(NSString*)text x:(int)x y:(int)y width:(int)width height:(int)height wrap:(int)wrap hAlign:(int)hAlign vAlign:(int)vAlign {
+	// --- paint some text ---
+	BBArray *result = bbArrayNew1D("i",4);
+	int *resultPointer = (int*)BBARRAYDATA(result,1);
+
+	//this should be moved out of here at some point
+	NSDictionary *textAttributes = [NSDictionary dictionaryWithObjectsAndKeys:color1, NSForegroundColorAttributeName, font, NSFontAttributeName,nil];
+	
+	//get content size
+	NSSize maxSize;
+	if (wrap == 0 || width == 0) {
+		maxSize = NSMakeSize(0.0,0.0);
+	} else {
+		maxSize = NSMakeSize(width,0.0);
+	}
+	NSRect rect = [text boundingRectWithSize:maxSize options:NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingDisableScreenFontSubstitution attributes:textAttributes];
+	
+	if (width == 0) { width = rect.size.width; }
+	if (height == 0) { height = rect.size.height; }
+	
+	//align content position
+	switch(hAlign) {
+		case 0:
+			//left
+			rect.origin.x = x;
+			break;
+		case 1:
+			//center
+			rect.origin.x = x+(width/2)-(rect.size.width/2);
+			break;
+		case 2:
+			//right
+			rect.origin.x = x+width-rect.size.width;;
+			break;
+	}
+	
+	switch(vAlign) {
+		case 0:
+			//top
+			rect.origin.y = y;
+			break;
+		case 1:
+			//center
+			rect.origin.y = y+(height/2)-(rect.size.height/2);
+			break;
+		case 2:
+			//bottom
+			rect.origin.y = y+height-rect.size.height;;
+			break;
+	}
+	
+	//now return the dimensions as a blitz array
+	resultPointer[0] = (int)rect.origin.x;
+	resultPointer[1] = (int)rect.origin.y;
+	resultPointer[2] = (int)rect.size.width;
+	resultPointer[3] = (int)rect.size.height;
+	return result;
 }
 
 -(void)paintBitmap:(NSImage*)image x:(int)x y:(int)y {
@@ -329,7 +402,7 @@ void Skn3PaintPanelPaintOval(nsgadget *gadget,int x,int y, int width, int height
 	[gadget->view paintOval:x y:y width:width height:height];
 }
 
-void Skn3PaintPanelPaintText(nsgadget *gadget,BBString *text,int x,int y,int width,int height,int wrap,int hAlign,int vAlign) {
+BBArray * Skn3PaintPanelPaintText(nsgadget *gadget,BBString *text,int x,int y,int width,int height,int wrap,int hAlign,int vAlign) {
 	[gadget->view paintText:[NSString stringWithCString:bbStringToCString(text)] x:x y:y width:width height:height wrap:wrap hAlign:hAlign vAlign:vAlign];
 }
 

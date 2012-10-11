@@ -23,7 +23,8 @@
 -(void)paintGradient:(int)x y:(int)y width:(int)width height:(int)height vertical:(int)vertical;
 -(void)paintRect:(int)x y:(int)y width:(int)width height:(int)height;
 -(void)paintOval:(int)x y:(int)y width:(int)width height:(int)height;
--(void)paintText:(NSString*)text x:(int)x y:(int)y width:(int)width height:(int)height wrap:(int)wrap hAlign:(int)hAlign vAlign:(int)vAlign;
+-(BBArray *)paintText:(NSString*)text x:(int)x y:(int)y width:(int)width height:(int)height wrap:(int)wrap hAlign:(int)hAlign vAlign:(int)vAlign;
+-(BBArray *)paintTextDimensions:(NSString*)text x:(int)x y:(int)y width:(int)width height:(int)height wrap:(int)wrap hAlign:(int)hAlign vAlign:(int)vAlign;
 -(void)paintBitmap:(NSImage*)image x:(int)x y:(int)y;
 -(void)paintSubBitmap:(NSImage*)image x:(int)x y:(int)y width:(int)width height:(int)height sourceX:(int)sourceX sourceY:(int)sourceY sourceWidth:(int)sourceWidth sourceHeight:(int)sourceHeight;
 @end
@@ -38,6 +39,7 @@ void Skn3PaintPanelPaintLine(nsgadget *gadget,int x1,int y1, int x2, int y2,int 
 void Skn3PaintPanelPaintGradient(nsgadget *gadget,int x,int y, int width, int height,int vertical);
 void Skn3PaintPanelPaintRect(nsgadget *gadget,int x,int y, int width, int height);
 void Skn3PaintPanelPaintOval(nsgadget *gadget,int x,int y, int width, int height);
-void Skn3PaintPanelPaintText(nsgadget *gadget,BBString *text,int x,int y,int width,int height,int wrap,int hAlign,int vAlign);
+BBArray * Skn3PaintPanelPaintText(nsgadget *gadget,BBString *text,int x,int y,int width,int height,int wrap,int hAlign,int vAlign);
+BBArray * Skn3PaintPanelPaintTextDimensions(nsgadget *gadget,BBString *text,int x,int y,int width,int height,int wrap,int hAlign,int vAlign);
 void Skn3PaintPanelPaintBitmap(nsgadget *gadget,NSImage *image,int x,int y);
 void Skn3PaintPanelPaintSubBitmap(nsgadget *gadget,NSImage *image,int x,int y,int width,int height,int sourceX,int sourceY,int sourceWidth,int sourceHeight);

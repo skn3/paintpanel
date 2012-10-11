@@ -1,3 +1,5 @@
+ModuleInfo "History: 1.02"
+ModuleInfo "History: Added PaintTextDimensions method"
 ModuleInfo "History: 1.01"
 ModuleInfo "History: Mac version done"
 ModuleInfo "History: 1.00"
@@ -6,11 +8,8 @@ import brl.blitz
 import brl.linkedlist
 import brl.pixmap
 import maxgui.drivers
-ALIGN_LEFT%=0
-ALIGN_CENTER%=1
-ALIGN_RIGHT%=2
-ALIGN_TOP%=0
-ALIGN_BOTTOM%=2
+import skn3.callback
+import skn3.funcs
 Skn3PaintPanel^maxgui.win32maxguiex.TWindowsPanel{
 .painting%&
 .paintingX%&
@@ -53,7 +52,8 @@ Skn3PaintPanel^maxgui.win32maxguiex.TWindowsPanel{
 -PaintLine%(x1%,y1%,x2%,y2%,width%=1)="_skn3_paintpanel_Skn3PaintPanel_PaintLine"
 -PaintOval%(x%,y%,Width%,Height%)="_skn3_paintpanel_Skn3PaintPanel_PaintOval"
 -PaintPoint%(x%,y%)="_skn3_paintpanel_Skn3PaintPanel_PaintPoint"
--PaintText%(text$,x%,y%,Width%=0,Height%=0,wrap%=0,hAlign%=0,vAlign%=0)="_skn3_paintpanel_Skn3PaintPanel_PaintText"
+-PaintText%&[](text$,x%,y%,Width%=0,Height%=0,wrap%=0,hAlign%=0,vAlign%=0)="_skn3_paintpanel_Skn3PaintPanel_PaintText"
+-PaintTextDimensions%&[](text$,x%=0,y%=0,Width%=0,Height%=0,wrap%=0,hAlign%=0,vAlign%=0)="_skn3_paintpanel_Skn3PaintPanel_PaintTextDimensions"
 -PaintBitmap%(bitmap:Skn3PaintBitmap,x%,y%)="_skn3_paintpanel_Skn3PaintPanel_PaintBitmap"
 -PaintSubBitmap%(bitmap:Skn3PaintBitmap,x%,y%,Width%,Height%,sourceX%=0,sourceY%=0,sourceWidth%=-1,sourceHeight%=-1)="_skn3_paintpanel_Skn3PaintPanel_PaintSubBitmap"
 }="skn3_paintpanel_Skn3PaintPanel"
@@ -67,3 +67,4 @@ Skn3PaintBitmap^brl.blitz.Object{
 -Delete%()="_skn3_paintpanel_Skn3PaintBitmap_Delete"
 }="skn3_paintpanel_Skn3PaintBitmap"
 LoadPaintBitmap:Skn3PaintBitmap(url:Object)="skn3_paintpanel_LoadPaintBitmap"
+CALLBACK_PAINT_PANEL_PAINT%&=mem("skn3_paintpanel_CALLBACK_PAINT_PANEL_PAINT")
