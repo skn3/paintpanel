@@ -26,7 +26,7 @@ Import "paintpanel.m"
 ?
 
 'skn3 framework code
-'rem
+rem
 Import skn3.callback
 Import skn3.funcs
 
@@ -43,10 +43,10 @@ Function EmitPaintPanelCallback(panel:Skn3PaintPanel)
 	EndIf
 End Function
 Public
-'endrem
+endrem
 
 'maxgui stock code
-rem
+'rem
 Const ALIGN_LEFT:Int = 0
 Const ALIGN_CENTER:Int = 1
 Const ALIGN_RIGHT:Int = 2
@@ -60,7 +60,7 @@ Function EmitPaintPanelCallback(panel:Skn3PaintPanel)
 	If panel EmitEvent(CreateEvent(EVENT_GADGETPAINT,panel,0,0,0,0))
 End Function
 Public
-endrem
+'endrem
 
 Private
 Function GetCreationGroup:TGadget(Gadget:TGadget)
