@@ -1,5 +1,6 @@
 ModuleInfo "History: 1.02"
 ModuleInfo "History: Added PaintTextDimensions method"
+ModuleInfo "History: Added PaintText now returns [x,y,width,height] of the text that was just drawn"
 ModuleInfo "History: 1.01"
 ModuleInfo "History: Mac version done"
 ModuleInfo "History: 1.00"

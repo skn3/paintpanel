@@ -587,7 +587,14 @@ End Rem
 		EndIf
 		
 		'set the correct font
-		If font SelectFont(font.Handle)
+		Local oldFontHandle:Int
+		If font
+			If Self.deviceContext = 0
+				oldFontHandle = SelectObject(deviceContext,font.Handle)
+			Else
+				SelectFont(font.Handle)
+			EndIf
+		EndIf
 		
 		'calculate content dimensions
 		rect[0] = 0
@@ -626,7 +633,10 @@ End Rem
 		End Select
 		
 		'release stuff
-		If Self.deviceContext = 0 ReleaseDC(hwnd,deviceContext)
+		If Self.deviceContext = 0
+			If oldFontHandle SelectObject(deviceContext,oldFontHandle)
+			ReleaseDC(hwnd,deviceContext)
+		EndIf
 		
 		'return it
 		rect[0] = x+contentX

@@ -725,7 +725,7 @@ _303:
 	call	dword [eax+544]
 	add	esp,12
 	fld	dword [esi+248]
-	fmul	dword [_542]
+	fmul	dword [_546]
 	sub	esp,8
 	fstp	qword [esp]
 	call	_bbFloatToInt
@@ -1863,7 +1863,7 @@ _194:
 __skn3_paintpanel_Skn3PaintPanel_PaintTextDimensions:
 	push	ebp
 	mov	ebp,esp
-	sub	esp,20
+	sub	esp,24
 	push	ebx
 	push	esi
 	push	edi
@@ -1874,7 +1874,7 @@ __skn3_paintpanel_Skn3PaintPanel_PaintTextDimensions:
 	call	_bbArrayNew1D
 	add	esp,8
 	mov	dword [ebp-4],eax
-	mov	dword [ebp-20],0
+	mov	dword [ebp-24],0
 	mov	eax,dword [ebp+8]
 	mov	eax,dword [eax+292]
 	mov	dword [ebp-16],eax
@@ -1884,14 +1884,26 @@ __skn3_paintpanel_Skn3PaintPanel_PaintTextDimensions:
 	push	dword [ebp+8]
 	call	_maxgui_maxgui_QueryGadget
 	add	esp,8
-	mov	dword [ebp-20],eax
-	push	dword [ebp-20]
+	mov	dword [ebp-24],eax
+	push	dword [ebp-24]
 	call	_GetDC@4
 	mov	dword [ebp-16],eax
 _449:
+	mov	dword [ebp-20],0
 	mov	eax,dword [ebp+8]
 	cmp	dword [eax+368],_bbNullObject
-	je	_450
+	je	_451
+	mov	eax,dword [ebp+8]
+	cmp	dword [eax+292],0
+	jne	_452
+	mov	eax,dword [ebp+8]
+	mov	eax,dword [eax+368]
+	push	dword [eax+32]
+	push	dword [ebp-16]
+	call	_SelectObject@8
+	mov	dword [ebp-20],eax
+	jmp	_453
+_452:
 	mov	edx,dword [ebp+8]
 	mov	eax,dword [ebp+8]
 	mov	eax,dword [eax+368]
@@ -1900,7 +1912,8 @@ _449:
 	mov	eax,dword [edx]
 	call	dword [eax+588]
 	add	esp,8
-_450:
+_453:
+_451:
 	mov	eax,dword [ebp-4]
 	mov	dword [eax+24],0
 	mov	eax,dword [ebp-4]
@@ -1914,13 +1927,13 @@ _450:
 	setg	al
 	movzx	eax,al
 	cmp	eax,0
-	je	_453
+	je	_456
 	mov	eax,ebx
-_453:
+_456:
 	cmp	eax,0
-	je	_455
+	je	_458
 	or	esi,16
-_455:
+_458:
 	push	dword [ebp+12]
 	call	_bbStringToWString
 	add	esp,4
@@ -1940,32 +1953,65 @@ _455:
 	mov	esi,0
 	mov	eax,dword [ebp-4]
 	mov	eax,dword [eax+8+24]
-	mov	dword [ebp-8],eax
+	mov	dword [ebp-12],eax
 	mov	eax,dword [ebp-4]
 	mov	eax,dword [eax+12+24]
-	mov	dword [ebp-12],eax
+	mov	dword [ebp-8],eax
 	cmp	edi,0
-	jne	_462
-	mov	edi,dword [ebp-8]
-_462:
+	jne	_465
+	mov	edi,dword [ebp-12]
+_465:
 	cmp	dword [ebp+28],0
-	jne	_463
-	mov	eax,dword [ebp-12]
+	jne	_466
+	mov	eax,dword [ebp-8]
 	mov	dword [ebp+28],eax
-_463:
+_466:
 	mov	eax,dword [ebp+36]
 	cmp	eax,0
-	je	_466
+	je	_469
 	cmp	eax,1
-	je	_467
+	je	_470
 	cmp	eax,2
-	je	_468
-	jmp	_465
-_466:
+	je	_471
+	jmp	_468
+_469:
 	mov	ebx,0
-	jmp	_465
-_467:
+	jmp	_468
+_470:
 	mov	eax,edi
+	cdq
+	mov	ecx,eax
+	mov	eax,edx
+	and	eax,1
+	add	ecx,eax
+	sar	ecx,1
+	mov	eax,dword [ebp-12]
+	cdq
+	and	edx,1
+	add	eax,edx
+	sar	eax,1
+	sub	ecx,eax
+	mov	ebx,ecx
+	jmp	_468
+_471:
+	mov	eax,edi
+	sub	eax,dword [ebp-12]
+	mov	ebx,eax
+	jmp	_468
+_468:
+	mov	eax,dword [ebp+40]
+	cmp	eax,0
+	je	_474
+	cmp	eax,1
+	je	_475
+	cmp	eax,2
+	je	_476
+	jmp	_473
+_474:
+	mov	esi,0
+	jmp	_473
+_475:
+	mov	eax,dword [ebp+28]
 	cdq
 	mov	ecx,eax
 	mov	eax,edx
@@ -1978,54 +2024,27 @@ _467:
 	add	eax,edx
 	sar	eax,1
 	sub	ecx,eax
-	mov	ebx,ecx
-	jmp	_465
-_468:
-	mov	eax,edi
-	sub	eax,dword [ebp-8]
-	mov	ebx,eax
-	jmp	_465
-_465:
-	mov	eax,dword [ebp+40]
-	cmp	eax,0
-	je	_471
-	cmp	eax,1
-	je	_472
-	cmp	eax,2
-	je	_473
-	jmp	_470
-_471:
-	mov	esi,0
-	jmp	_470
-_472:
-	mov	eax,dword [ebp+28]
-	cdq
-	mov	ecx,eax
-	mov	eax,edx
-	and	eax,1
-	add	ecx,eax
-	sar	ecx,1
-	mov	eax,dword [ebp-12]
-	cdq
-	and	edx,1
-	add	eax,edx
-	sar	eax,1
-	sub	ecx,eax
 	mov	esi,ecx
-	jmp	_470
-_473:
+	jmp	_473
+_476:
 	mov	eax,dword [ebp+28]
-	sub	eax,dword [ebp-12]
+	sub	eax,dword [ebp-8]
 	mov	esi,eax
-	jmp	_470
-_470:
+	jmp	_473
+_473:
 	mov	eax,dword [ebp+8]
 	cmp	dword [eax+292],0
-	jne	_474
-	push	dword [ebp-16]
+	jne	_477
+	cmp	dword [ebp-20],0
+	je	_478
 	push	dword [ebp-20]
+	push	dword [ebp-16]
+	call	_SelectObject@8
+_478:
+	push	dword [ebp-16]
+	push	dword [ebp-24]
 	call	_ReleaseDC@8
-_474:
+_477:
 	mov	edx,dword [ebp-4]
 	mov	eax,dword [ebp+16]
 	add	eax,ebx
@@ -2037,12 +2056,12 @@ _474:
 	mov	edx,dword [ebp-4]
 	mov	eax,dword [ebp-4]
 	mov	eax,dword [eax+24]
-	add	eax,dword [ebp-8]
+	add	eax,dword [ebp-12]
 	mov	dword [edx+8+24],eax
 	mov	edx,dword [ebp-4]
 	mov	eax,dword [ebp-4]
 	mov	eax,dword [eax+4+24]
-	add	eax,dword [ebp-12]
+	add	eax,dword [ebp-8]
 	mov	dword [edx+12+24],eax
 	mov	eax,dword [ebp-4]
 	jmp	_205
@@ -2096,16 +2115,16 @@ __skn3_paintpanel_Skn3PaintPanel_PaintSubBitmap:
 	sete	al
 	movzx	eax,al
 	cmp	eax,0
-	jne	_476
+	jne	_480
 	cmp	esi,_bbNullObject
 	sete	al
 	movzx	eax,al
-_476:
+_480:
 	cmp	eax,0
-	je	_478
+	je	_482
 	mov	eax,0
 	jmp	_223
-_478:
+_482:
 	mov	eax,dword [ebp+8]
 	push	dword [eax+292]
 	call	_CreateCompatibleDC@4
@@ -2118,23 +2137,23 @@ _478:
 	sete	al
 	movzx	eax,al
 	cmp	eax,0
-	jne	_481
+	jne	_485
 	mov	eax,dword [ebp+44]
 	cmp	eax,-1
 	sete	al
 	movzx	eax,al
-_481:
+_485:
 	cmp	eax,0
-	je	_483
+	je	_487
 	mov	eax,dword [esi+12]
 	sub	eax,dword [ebp+32]
 	mov	edi,eax
 	mov	eax,dword [esi+16]
 	sub	eax,dword [ebp+36]
 	mov	dword [ebp+44],eax
-_483:
+_487:
 	cmp	dword [esi+20],0
-	je	_484
+	je	_488
 	push	33488896
 	push	dword [ebp+44]
 	push	edi
@@ -2148,34 +2167,34 @@ _483:
 	mov	eax,dword [ebp+8]
 	push	dword [eax+292]
 	call	_AlphaBlend@44
-	jmp	_485
-_484:
+	jmp	_489
+_488:
 	mov	eax,dword [ebp+32]
 	cmp	eax,0
 	sete	al
 	movzx	eax,al
 	cmp	eax,0
-	je	_486
+	je	_490
 	mov	eax,dword [ebp+36]
 	cmp	eax,0
-	sete	al
-	movzx	eax,al
-_486:
-	cmp	eax,0
-	je	_488
-	cmp	edi,dword [ebp+24]
-	sete	al
-	movzx	eax,al
-_488:
-	cmp	eax,0
-	je	_490
-	mov	eax,dword [ebp+44]
-	cmp	eax,dword [ebp+28]
 	sete	al
 	movzx	eax,al
 _490:
 	cmp	eax,0
 	je	_492
+	cmp	edi,dword [ebp+24]
+	sete	al
+	movzx	eax,al
+_492:
+	cmp	eax,0
+	je	_494
+	mov	eax,dword [ebp+44]
+	cmp	eax,dword [ebp+28]
+	sete	al
+	movzx	eax,al
+_494:
+	cmp	eax,0
+	je	_496
 	push	13369376
 	push	0
 	push	0
@@ -2187,8 +2206,8 @@ _490:
 	mov	eax,dword [ebp+8]
 	push	dword [eax+292]
 	call	_BitBlt@36
-	jmp	_493
-_492:
+	jmp	_497
+_496:
 	push	13369376
 	push	dword [ebp+44]
 	push	edi
@@ -2202,8 +2221,8 @@ _492:
 	mov	eax,dword [ebp+8]
 	push	dword [eax+292]
 	call	_StretchBlt@44
-_493:
-_485:
+_497:
+_489:
 	push	dword [ebp-4]
 	push	ebx
 	call	_SelectObject@8
@@ -2243,7 +2262,7 @@ _skn3_paintpanel_CreatePaintPanel:
 	add	esp,16
 	mov	ebx,eax
 	cmp	esi,_bbNullObject
-	je	_496
+	je	_500
 	mov	eax,ebx
 	push	-1
 	push	esi
@@ -2251,7 +2270,7 @@ _skn3_paintpanel_CreatePaintPanel:
 	mov	eax,dword [eax]
 	call	dword [eax+56]
 	add	esp,12
-_496:
+_500:
 	mov	eax,ebx
 	push	dword [ebp+20]
 	push	dword [ebp+16]
@@ -2266,7 +2285,7 @@ _496:
 	call	_bbObjectDowncast
 	add	esp,8
 	cmp	eax,_bbNullObject
-	je	_499
+	je	_503
 	mov	eax,ebx
 	push	dword [__maxgui_win32maxguiex_TWindowsGUIDriver_GDIFont]
 	push	eax
@@ -2278,7 +2297,7 @@ _496:
 	call	_bbObjectDowncast
 	add	esp,8
 	cmp	eax,_bbNullObject
-	je	_501
+	je	_505
 	push	_maxgui_win32maxguiex_TWindowsGadget
 	push	ebx
 	call	_bbObjectDowncast
@@ -2290,7 +2309,7 @@ _496:
 	add	esp,8
 	mov	eax,dword [eax+232]
 	cmp	eax,0
-	je	_503
+	je	_507
 	push	_maxgui_win32maxguiex_TWindowsGadget
 	push	esi
 	call	_bbObjectDowncast
@@ -2299,7 +2318,7 @@ _496:
 	cmp	eax,0
 	sete	al
 	movzx	eax,al
-_503:
+_507:
 	cmp	eax,0
 	sete	al
 	movzx	eax,al
@@ -2318,7 +2337,7 @@ _503:
 	mov	eax,dword [ebx]
 	call	dword [eax+284]
 	add	esp,8
-_501:
+_505:
 	mov	eax,ebx
 	push	0
 	push	1
@@ -2326,13 +2345,13 @@ _501:
 	mov	eax,dword [eax]
 	call	dword [eax+280]
 	add	esp,12
-_499:
+_503:
 	push	_maxgui_win32maxguiex_TWindowsGadget
 	push	ebx
 	call	_bbObjectDowncast
 	add	esp,8
 	cmp	eax,_bbNullObject
-	je	_508
+	je	_512
 	push	_maxgui_win32maxguiex_TWindowsGadget
 	push	ebx
 	call	_bbObjectDowncast
@@ -2341,7 +2360,7 @@ _499:
 	mov	eax,dword [eax]
 	call	dword [eax+548]
 	add	esp,4
-_508:
+_512:
 	push	_skn3_paintpanel_Skn3PaintPanel
 	push	ebx
 	call	_bbObjectDowncast
@@ -2382,15 +2401,15 @@ __skn3_paintpanel_Skn3PaintBitmap_Delete:
 	push	edi
 	mov	ebx,dword [ebp+8]
 	cmp	dword [ebx+8],0
-	je	_510
+	je	_514
 	push	dword [ebx+8]
 	call	_DeleteObject@4
 	mov	dword [ebx+8],0
-_510:
+_514:
 _237:
 	mov	eax,0
-	jmp	_511
-_511:
+	jmp	_515
+_515:
 	pop	edi
 	pop	esi
 	pop	ebx
@@ -2414,47 +2433,47 @@ _skn3_paintpanel_LoadPaintBitmap:
 	add	esp,8
 	mov	ebx,eax
 	cmp	ebx,_bbNullObject
-	jne	_514
+	jne	_518
 	push	esi
 	call	_brl_pixmap_LoadPixmap
 	add	esp,4
 	mov	ebx,eax
-_514:
+_518:
 	cmp	ebx,_bbNullObject
-	jne	_515
+	jne	_519
 	mov	eax,_bbNullObject
 	jmp	_240
-_515:
+_519:
 	mov	eax,dword [ebx+24]
 	cmp	eax,6
 	sete	al
 	movzx	eax,al
 	cmp	eax,0
-	jne	_516
+	jne	_520
 	mov	eax,dword [ebx+24]
 	cmp	eax,5
 	sete	al
 	movzx	eax,al
-_516:
+_520:
 	cmp	eax,0
-	je	_518
+	je	_522
 	push	ebx
 	call	__maxgui_win32maxguiex_TWindowsGraphic_PreMultipliedBitmapFromPixmap32
 	add	esp,4
 	mov	dword [edi+8],eax
-_518:
+_522:
 	cmp	dword [edi+8],0
-	je	_519
+	je	_523
 	mov	dword [edi+20],1
-	jmp	_520
-_519:
+	jmp	_524
+_523:
 	push	0
 	push	ebx
 	call	__maxgui_win32maxguiex_TWindowsGraphic_BitmapFromPixmap
 	add	esp,8
 	mov	dword [edi+8],eax
 	mov	dword [edi+20],0
-_520:
+_524:
 	mov	eax,dword [ebx+12]
 	mov	dword [edi+12],eax
 	mov	eax,dword [ebx+16]
@@ -3015,7 +3034,7 @@ _289:
 _291:
 	db	"i",0
 	align	4
-_542:
+_546:
 	dd	0x437f0000
 _381:
 	db	"i",0

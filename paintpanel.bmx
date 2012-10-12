@@ -7,6 +7,8 @@ End Rem
 Module skn3.paintpanel
 SuperStrict
 
+ModuleInfo "History: 1.03"
+ModuleInfo "History: Fixed devicecontext font selection issue with using PaintTextDimensions outside of EVENT_GADGETPAINT"
 ModuleInfo "History: 1.02"
 ModuleInfo "History: Added PaintTextDimensions method"
 ModuleInfo "History: Added PaintText now returns [x,y,width,height] of the text that was just drawn"
