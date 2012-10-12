@@ -5,6 +5,10 @@
 *.class
 *.dll
 *.exe
+#*.a
+#*.i
+#*.o
+#*.s
 
 # Packages #
 ############
@@ -35,3 +39,4 @@ Thumbs.db
 # misc files #
 ######################
 example1_skn3callback.bmx
+#.bmx
